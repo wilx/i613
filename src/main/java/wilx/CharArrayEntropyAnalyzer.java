@@ -1,4 +1,8 @@
-import java.util.*;
+package wilx;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  *  Třída reprezentující analyzátor entropie pole charů.
@@ -22,11 +26,11 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *
      *@param  b  Pole zprávy.
      */
-    public CharArrayEntropyAnalyzer(char[] b) {
+    public CharArrayEntropyAnalyzer(final char[] b) {
         buffer = b;
         freq = new HashMap();
-        this.computeFrequencies();
-        this.compute();
+        computeFrequencies();
+        compute();
     }
 
 
@@ -36,10 +40,10 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@param  b  Pole zprávy.
      *@param  f  Uživatelská mapa frekvence výskytů zdrojových jednotek.
      */
-    public CharArrayEntropyAnalyzer(char[] b, Map f) {
+    public CharArrayEntropyAnalyzer(final char[] b, final Map f) {
         buffer = b;
         freq = f;
-        this.compute();
+        compute();
     }
 
 
@@ -48,11 +52,11 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *
      *@param  b  Pole zprávy.
      */
-    public void setBuffer(char[] b) {
+    public void setBuffer(final char[] b) {
         buffer = b;
         freq.clear();
-        this.computeFrequencies();
-        this.compute();
+        computeFrequencies();
+        compute();
     }
 
 
@@ -62,7 +66,8 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@param  o  Zrdojová jednotka.
      *@return    Entropie zdrojové jednotky.
      */
-    public double entropy(Object o) {
+    @Override
+    public double entropy(final Object o) {
         return -log2(probability(o));
     }
 
@@ -73,7 +78,8 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@param  m  Zpráva
      *@return    Entropie zprávy.
      */
-    public double messageEntropy(Object[] m) {
+    @Override
+    public double messageEntropy(final Object[] m) {
         double ent = 0;
         double prob;
         for (int i = 0; i < m.length; ++i) {
@@ -87,13 +93,14 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
     /**
      *  Přepočítá průměrnou entropii a frekvence výskytů zdrojových jednotek.
      */
+    @Override
     public void compute() {
-        Object o;
+        final Object o;
         avgent = 0;
-        Iterator it = freq.keySet().iterator();
+        final Iterator it = freq.keySet().iterator();
         while (it.hasNext()) {
-            Character ch = (Character) it.next();
-            double prob = probability(ch);
+            final Character ch = (Character) it.next();
+            final double prob = probability(ch);
             avgent += prob * log2(prob);
         }
         avgent = -avgent;
@@ -106,7 +113,8 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@param  x  Zdrojová jednotka.
      *@return    Pravděpodobnost.
      */
-    public double probability(Object x) {
+    @Override
+    public double probability(final Object x) {
         Object o;
         if ((o = freq.get(x)) == null) {
             return 0;
@@ -123,7 +131,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@param  ch  Zdrojová jednotka.
      *@return     Pravděpodobnost.
      */
-    public double probability(char ch) {
+    public double probability(final char ch) {
         return probability(new Character(ch));
     }
 
@@ -151,6 +159,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
     /**
      *  Spočítá frekvence zdrojových jednotek v bufferu.
      */
+    @Override
     public void computeFrequencies() {
         Object o;
         freq.clear();

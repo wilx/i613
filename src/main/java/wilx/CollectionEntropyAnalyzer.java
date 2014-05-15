@@ -1,3 +1,4 @@
+package wilx;
 
 /**
  *  Tato třída definuje abstraktní metody pro analyzátor kolekce.

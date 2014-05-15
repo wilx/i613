@@ -1,5 +1,9 @@
-import java.util.*;
+package wilx;
+
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Vector;
 
 /**
  *  Třída prioritní fronty použitá při konstrukci stromu Huffmanova kódu.
@@ -27,7 +31,7 @@ public class PriorityQueue implements Serializable {
     static {
         defaultCmp =
             new Comparator() {
-                public int compare(Object o1, Object o2) {
+                public int compare(final Object o1, final Object o2) {
                     return ((Comparable) o1).compareTo(o2);
                 }
             };
@@ -49,7 +53,7 @@ public class PriorityQueue implements Serializable {
      *
      *@param  arr  Pole objektů ze kterých bude vytvořena fronta.
      */
-    public PriorityQueue(Object[] arr) {
+    public PriorityQueue(final Object[] arr) {
         cmp = defaultCmp;
         buf = new Vector(arr.length);
         size = arr.length;
@@ -65,7 +69,7 @@ public class PriorityQueue implements Serializable {
      *
      *@param  c  Uživatelský komparátor.
      */
-    public PriorityQueue(Comparator c) {
+    public PriorityQueue(final Comparator c) {
         cmp = c;
         buf = new Vector();
         size = 0;
@@ -78,7 +82,7 @@ public class PriorityQueue implements Serializable {
      *@param  arr  Pole objektů ze kterých bude vytvořena fronta.
      *@param  c    Uživatelský komparátor.
      */
-    public PriorityQueue(Object[] arr, Comparator c) {
+    public PriorityQueue(final Object[] arr, final Comparator c) {
         cmp = c;
         buf = new Vector(arr.length);
         size = arr.length;
@@ -94,7 +98,7 @@ public class PriorityQueue implements Serializable {
      *
      *@param  col  Kolekce ze které bude vytvořena fronta.
      */
-    public PriorityQueue(Collection col) {
+    public PriorityQueue(final Collection col) {
         cmp = defaultCmp;
         buf = new Vector(col);
         size = col.size();
@@ -108,7 +112,7 @@ public class PriorityQueue implements Serializable {
      *@param  col  Kolekce ze které bude vytvořena fronta.
      *@param  c    Uživatelský komparátor.
      */
-    public PriorityQueue(Collection col, Comparator c) {
+    public PriorityQueue(final Collection col, final Comparator c) {
         cmp = c;
         buf = new Vector(col);
         size = col.size();
@@ -122,7 +126,7 @@ public class PriorityQueue implements Serializable {
      *@param  i  Rodič.
      *@return    Levý následník.
      */
-    protected int left(int i) {
+    protected int left(final int i) {
         return (2 * i);
     }
 
@@ -133,7 +137,7 @@ public class PriorityQueue implements Serializable {
      *@param  i  Rodič.
      *@return    Pravý následník.
      */
-    protected int right(int i) {
+    protected int right(final int i) {
         return (2 * i + 1);
     }
 
@@ -144,7 +148,7 @@ public class PriorityQueue implements Serializable {
      *@param  i  Prvek.
      *@return    Rodič prvku.
      */
-    protected int parent(int i) {
+    protected int parent(final int i) {
         return (i / 2);
     }
 
@@ -155,8 +159,8 @@ public class PriorityQueue implements Serializable {
      *@param  i  Prvek haldy.
      *@param  j  Prvek haldy.
      */
-    protected void swap(int i, int j) {
-        Object tmp = buf.get(i);
+    protected void swap(final int i, final int j) {
+        final Object tmp = buf.get(i);
 
         buf.set(i, buf.get(j));
         buf.set(j, tmp);
@@ -168,8 +172,8 @@ public class PriorityQueue implements Serializable {
      *
      *@param  i  Prvek.
      */
-    protected void up(int i) {
-        int p = parent(i);
+    protected void up(final int i) {
+        final int p = parent(i);
 
         if (p > 0) {
             if (cmp.compare(buf.get(i - 1), buf.get(p - 1)) > 0) {
@@ -185,9 +189,9 @@ public class PriorityQueue implements Serializable {
      *
      *@param  i  Prvek.
      */
-    protected void heapify(int i) {
-        int l = left(i);
-        int r = right(i);
+    protected void heapify(final int i) {
+        final int l = left(i);
+        final int r = right(i);
         int largest;
 
         if (l <= size && cmp.compare(buf.get(l - 1), buf.get(i - 1)) > 0) {
@@ -212,7 +216,7 @@ public class PriorityQueue implements Serializable {
      *
      *@param  o  Prvek.
      */
-    public void put(Object o) {
+    public void put(final Object o) {
         if (buf.size() > size) {
             buf.set(size, o);
         }

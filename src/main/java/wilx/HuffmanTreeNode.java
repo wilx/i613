@@ -1,3 +1,5 @@
+package wilx;
+
 /**
  *  Třída reprezentující uzel v stromě Huffmanova kódu.
  *
@@ -33,7 +35,7 @@ public class HuffmanTreeNode {
      *@param  l  Levý podstrom.
      *@param  r  Pravý podstrom.
      */
-    public HuffmanTreeNode(double w, Object o, HuffmanTreeNode l, HuffmanTreeNode r) {
+    public HuffmanTreeNode(final double w, final Object o, final HuffmanTreeNode l, final HuffmanTreeNode r) {
         weight = w;
         left = l;
         right = r;
@@ -49,7 +51,7 @@ public class HuffmanTreeNode {
      *@param  l  Levý podstrom.
      *@param  r  Pravý podstrom.
      */
-    public HuffmanTreeNode(Double w, Object o, HuffmanTreeNode l, HuffmanTreeNode r) {
+    public HuffmanTreeNode(final Double w, final Object o, final HuffmanTreeNode l, final HuffmanTreeNode r) {
         this(w.doubleValue(), o, l, r);
     }
 
@@ -60,7 +62,7 @@ public class HuffmanTreeNode {
      *@param  w  Váha uzlu.
      *@param  o  Obsah uzlu.
      */
-    public HuffmanTreeNode(double w, Object o) {
+    public HuffmanTreeNode(final double w, final Object o) {
         weight = w;
         left = right = null;
         obj = o;
@@ -73,7 +75,7 @@ public class HuffmanTreeNode {
      *@param  w  Váha uzlu.
      *@param  o  Obsah uzlu.
      */
-    public HuffmanTreeNode(Double w, Object o) {
+    public HuffmanTreeNode(final Double w, final Object o) {
         this(w.doubleValue(), o);
     }
 

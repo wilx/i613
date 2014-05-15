@@ -1,3 +1,4 @@
+package wilx;
 
 /**
  *  Trída definující interface analyzátoru entropie.
@@ -52,9 +53,9 @@ public abstract class EntropyAnalyzer {
      *@param  x  Hodnota x.
      *@return    Logaritmus x o základu 2.
      */
-    public static double log2(double x) {
-        double l = Math.log(x) / Math.log(2);
-        return l == (double) -0.0 ? 0.0 : l;
+    public static double log2(final double x) {
+        final double l = Math.log(x) / Math.log(2);
+        return l == -0.0 ? 0.0 : l;
     }
 }
 

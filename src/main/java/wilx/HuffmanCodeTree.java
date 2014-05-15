@@ -1,4 +1,10 @@
-import java.util.*;
+package wilx;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *  Třída reprezentující strom Huffmanova kódu.
@@ -18,10 +24,10 @@ public class HuffmanCodeTree {
      *
      *@param  probMap  Mapa pravděpodobností výskytu zdrojových jednotek.
      */
-    public HuffmanCodeTree(Map probMap) {
-        PriorityQueue q = new PriorityQueue(
+    public HuffmanCodeTree(final Map probMap) {
+        final PriorityQueue q = new PriorityQueue(
             new Comparator() {
-                public int compare(Object o1, Object o2) {
+                public int compare(final Object o1, final Object o2) {
                     if (((HuffmanTreeNode) o1).getWeight()
                              < ((HuffmanTreeNode) o2).getWeight()) {
                         return 1;
@@ -35,16 +41,16 @@ public class HuffmanCodeTree {
                     }
                 }
             });
-        Set entries = probMap.entrySet();
-        Iterator i = entries.iterator();
-        Object o;
+        final Set entries = probMap.entrySet();
+        final Iterator i = entries.iterator();
+        final Object o;
 
         /*
          *  inicializace prioritni frony
          */
         while (i.hasNext()) {
-            Map.Entry e = (Map.Entry) i.next();
-            q.put(new HuffmanTreeNode(new Double((double) ((Integer) e.getValue()).intValue()),
+            final Map.Entry e = (Map.Entry) i.next();
+            q.put(new HuffmanTreeNode(new Double(((Integer) e.getValue()).intValue()),
                     e.getKey()));
         }
 
@@ -71,7 +77,7 @@ public class HuffmanCodeTree {
      *@param  str   Řetězec reprezentující prošlou část mapy.
      *@param  map   Převodní mapa.
      */
-    protected void preorder(HuffmanTreeNode node, String str, Map map) {
+    protected void preorder(final HuffmanTreeNode node, final String str, final Map map) {
         if (node == null) {
             return;
         }
@@ -93,7 +99,7 @@ public class HuffmanCodeTree {
      *@return    Mapa Huffmanova kódu.
      */
     public Map getHuffmanCode() {
-        Map map = new HashMap();
+        final Map map = new HashMap();
         preorder(root, "", map);
         return map;
     }

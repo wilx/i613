@@ -1,12 +1,29 @@
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.text.*;
-import java.util.*;
+package wilx;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.JApplet;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 /**
  *  Hlavní třída appletu Teorie informace.
@@ -37,7 +54,7 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  Description of the Parameter
          */
-        public void changedUpdate(DocumentEvent e) {
+        public void changedUpdate(final DocumentEvent e) {
             handler(e);
         }
 
@@ -47,7 +64,7 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  Description of the Parameter
          */
-        public void insertUpdate(DocumentEvent e) {
+        public void insertUpdate(final DocumentEvent e) {
             handler(e);
         }
 
@@ -57,7 +74,7 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  Description of the Parameter
          */
-        public void removeUpdate(DocumentEvent e) {
+        public void removeUpdate(final DocumentEvent e) {
             handler(e);
         }
 
@@ -68,32 +85,32 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  DocumentEvent
          */
-        private void handler(DocumentEvent e) {
+        private void handler(final DocumentEvent e) {
             int i;
-            Document doc = e.getDocument();
+            final Document doc = e.getDocument();
             String text;
             try {
                 text = doc.getText(0, doc.getLength());
-            } catch (BadLocationException ex) {
+            } catch (final BadLocationException ex) {
                 System.err.println("Exceprion: " + ex);
                 return;
             }
             // update tabulky
-            char[] znaky = text.toUpperCase().toCharArray();
+            final char[] znaky = text.toUpperCase().toCharArray();
             Arrays.sort(znaky);
             ea = new CharArrayEntropyAnalyzer(znaky);
             model.update(znaky);
             // update ostatnich hodnot
             // prumenrna entropie
-            lblAvgEnt.setText(df.format(ea.averageEntropy() == (double) -0.0
+            lblAvgEnt.setText(df.format(ea.averageEntropy() == -0.0
                      ? 0.0 : ea.averageEntropy()) + " bitů");
-            char[] m = text.toUpperCase().toCharArray();
-            Object[] msg = new Object[m.length];
+            final char[] m = text.toUpperCase().toCharArray();
+            final Object[] msg = new Object[m.length];
             for (i = 0; i < m.length; ++i) {
                 msg[i] = new Character(m[i]);
             }
             double msgEnt = ea.messageEntropy(msg);
-            if (msgEnt == (double) -0.0) {
+            if (msgEnt == -0.0) {
                 msgEnt = 0.0;
             }
             // entropie zpravy
@@ -101,10 +118,10 @@ public class TeorieInformace extends JApplet {
             // delka zpravy
             lblMsgLen.setText((doc.getLength() * 8) + " bitů");
             int len = 0;
-            HuffmanCodeTree huff = new HuffmanCodeTree(ea.getFrequenciesMap());
-            Map huffkod = huff.getHuffmanCode();
+            final HuffmanCodeTree huff = new HuffmanCodeTree(ea.getFrequenciesMap());
+            final Map huffkod = huff.getHuffmanCode();
             for (i = 0; i < msg.length; ++i) {
-                String s = (String) huffkod.get(msg[i]);
+                final String s = (String) huffkod.get(msg[i]);
                 len += s.length();
             }
             // delka zpravy v Huffmanove kodu
@@ -115,7 +132,7 @@ public class TeorieInformace extends JApplet {
             lblMsgHuffRed.setText(df.format(len - msgEnt) + " bitů");
             // prumerna delka slova ASCII kodu zpravy
             double avgwordlen = 0;
-            Object[] klice = huffkod.keySet().toArray();
+            final Object[] klice = huffkod.keySet().toArray();
             for (i = 0; i < klice.length; ++i) {
                 avgwordlen += 8 * ea.probability(klice[i]);
             }
@@ -123,7 +140,7 @@ public class TeorieInformace extends JApplet {
             // prumerna delka slova Huffmanova kodu zpravy
             double avgwordhufflen = 0;
             for (i = 0; i < klice.length; ++i) {
-                avgwordhufflen += ((String)huffkod.get(klice[i])).length() 
+                avgwordhufflen += ((String)huffkod.get(klice[i])).length()
                                   * ea.probability(klice[i]);
             }
             lblCWordHuffLen.setText(df.format(avgwordhufflen));
@@ -162,13 +179,13 @@ public class TeorieInformace extends JApplet {
          *
          *@param  znaky  Buffer analyzované zprávy.
          */
-        public void update(char[] znaky) {
+        public void update(final char[] znaky) {
             int i;
 
             data = new Vector();
             sloupce = new Vector();
-            Map freq = ea.getFrequenciesMap();
-            Object[] klice = freq.keySet().toArray();
+            final Map freq = ea.getFrequenciesMap();
+            final Object[] klice = freq.keySet().toArray();
             Arrays.sort(klice);
             // zahlavi
             sloupce.add("Názvy");
@@ -179,7 +196,7 @@ public class TeorieInformace extends JApplet {
             Vector radek = new Vector();
             radek.add("Pravděpodobnost");
             for (i = 0; i < klice.length; ++i) {
-                double p = ea.probability((Character) klice[i]);
+                final double p = ea.probability(klice[i]);
                 radek.add(df.format(p));
             }
             data.add(radek);
@@ -188,17 +205,17 @@ public class TeorieInformace extends JApplet {
             radek.add("Entropie");
             for (i = 0; i < klice.length; ++i) {
                 double e = ea.entropy(klice[i]);
-                e = e == (double)-0.0 ? 0.0 : e;
+                e = e == -0.0 ? 0.0 : e;
                 radek.add(df.format(e));
             }
             data.add(radek);
             // radek delky Huffmanova kodu pro dany znak
             radek = new Vector();
             radek.add("Délka Huffmanova kódu");
-            HuffmanCodeTree huff = new HuffmanCodeTree(ea.getFrequenciesMap());
-            Map huffkod = huff.getHuffmanCode();
+            final HuffmanCodeTree huff = new HuffmanCodeTree(ea.getFrequenciesMap());
+            final Map huffkod = huff.getHuffmanCode();
             for (i = 0; i < klice.length; ++i) {
-                String s = (String) huffkod.get(klice[i]);
+                final String s = (String) huffkod.get(klice[i]);
                 radek.add(Integer.toString(s.length()));
             }
             data.add(radek);
@@ -240,7 +257,8 @@ public class TeorieInformace extends JApplet {
          *@param  col  Description of the Parameter
          *@return      The columnName value
          */
-        public String getColumnName(int col) {
+        @Override
+        public String getColumnName(final int col) {
             return (String) sloupce.elementAt(col);
         }
 
@@ -252,9 +270,9 @@ public class TeorieInformace extends JApplet {
          *@param  col  Description of the Parameter
          *@return      The valueAt value
          */
-        public Object getValueAt(int row, int col) {
-            Vector r = (Vector) data.elementAt(row);
-            Object o = r.elementAt(col);
+        public Object getValueAt(final int row, final int col) {
+            final Vector r = (Vector) data.elementAt(row);
+            final Object o = r.elementAt(col);
             return o;
             //return ((Vector)data.elementAt(row)).elementAt(col);
         }
@@ -266,7 +284,8 @@ public class TeorieInformace extends JApplet {
          *@param  c  Description of the Parameter
          *@return    The columnClass value
          */
-        public Class getColumnClass(int c) {
+        @Override
+        public Class getColumnClass(final int c) {
             return getValueAt(0, c).getClass();
         }
     }
@@ -284,9 +303,10 @@ public class TeorieInformace extends JApplet {
     /**
      *  Incializační metoda appletu.
      */
+    @Override
     public void init() {
         panel = new JPanel(new BorderLayout());
-        contentPane = (JPanel) this.getContentPane();
+        contentPane = (JPanel) getContentPane();
         contentPane.add(panel);
 
         createCenter();
@@ -299,11 +319,11 @@ public class TeorieInformace extends JApplet {
      *  Vytvoří centrální část okna programu, tabulka charakteristik jednotlivých písmen.
      */
     protected void createCenter() {
-        JPanel center = new JPanel(new GridLayout());
+        final JPanel center = new JPanel(new GridLayout());
         model = new MyTableModel();
-        JTable table = new JTable(model);
-        
-        JScrollPane sp = new JScrollPane(table);
+        final JTable table = new JTable(model);
+
+        final JScrollPane sp = new JScrollPane(table);
 
         center.add(sp);
         center.setBorder(BorderFactory.createTitledBorder
@@ -316,11 +336,11 @@ public class TeorieInformace extends JApplet {
      *  Vytvoří východní část hlavního okna programu, hodnoty a jejich názvy.
      */
     protected void createEast() {
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        JPanel east = new JPanel(gridbag);
+        final GridBagLayout gridbag = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
+        final JPanel east = new JPanel(gridbag);
         JComponent comp;
-        Border empty = BorderFactory.createEmptyBorder(1, 1, 1, 3);
+        final Border empty = BorderFactory.createEmptyBorder(1, 1, 1, 3);
 
         //
         c.fill = GridBagConstraints.BOTH;
@@ -407,12 +427,12 @@ public class TeorieInformace extends JApplet {
         comp.setBorder(empty);
         gridbag.setConstraints(comp, c);
         east.add(comp);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         lblCWordLen = new JLabel("- bitů");
         gridbag.setConstraints(lblCWordLen, c);
         east.add(lblCWordLen);
-        
+
         //
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 1;
@@ -420,12 +440,12 @@ public class TeorieInformace extends JApplet {
         comp.setBorder(empty);
         gridbag.setConstraints(comp, c);
         east.add(comp);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         lblCWordHuffLen = new JLabel("- bitů");
         gridbag.setConstraints(lblCWordHuffLen, c);
         east.add(lblCWordHuffLen);
-        
+
         //
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 1;
@@ -433,12 +453,12 @@ public class TeorieInformace extends JApplet {
         comp.setBorder(empty);
         gridbag.setConstraints(comp, c);
         east.add(comp);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         lblAvgRedASCII = new JLabel("- bitů");
         gridbag.setConstraints(lblAvgRedASCII, c);
         east.add(lblAvgRedASCII);
-        
+
         //
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 1;
@@ -446,12 +466,12 @@ public class TeorieInformace extends JApplet {
         comp.setBorder(empty);
         gridbag.setConstraints(comp, c);
         east.add(comp);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         lblAvgRedHuff = new JLabel("- bitů");
         gridbag.setConstraints(lblAvgRedHuff, c);
         east.add(lblAvgRedHuff);
-        
+
         east.setBorder(BorderFactory.createTitledBorder("Analýza"));
         panel.add(east, BorderLayout.EAST);
     }
@@ -461,9 +481,9 @@ public class TeorieInformace extends JApplet {
      *  Vytvoří obsah jižního panelu hlavního okna programu, textové pole.
      */
     protected void createSouth() {
-        JPanel south = new JPanel(new GridLayout());
-        JTextArea input = new JTextArea(10, 50);
-        JScrollPane sp = new JScrollPane(input);
+        final JPanel south = new JPanel(new GridLayout());
+        final JTextArea input = new JTextArea(10, 50);
+        final JScrollPane sp = new JScrollPane(input);
         input.getDocument().addDocumentListener(new TextAreaListener());
         south.add(sp);
         south.setBorder(BorderFactory.createTitledBorder("Zpráva"));
@@ -477,8 +497,8 @@ public class TeorieInformace extends JApplet {
      *
      *@param  argv  The command line arguments
      */
-    public static void main(String[] argv) {
-        JFrame frame = new JFrame("Teorie informace");
+    public static void main(final String[] argv) {
+        final JFrame frame = new JFrame("Teorie informace");
         frame.setContentPane(new TeorieInformace());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
