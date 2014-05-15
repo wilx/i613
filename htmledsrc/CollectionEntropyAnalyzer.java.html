@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.2">
+<TITLE>CollectionEntropyAnalyzer (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">CollectionEntropyAnalyzer.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A>
+<A NAME="2"></A><FONT ID="FormalComment">/**
+<A NAME="3"></A> *  Tato třída definuje abstraktní metody pro analyzátor kolekce.
+<A NAME="4"></A> *
+<A NAME="5"></A> *@author     Václav Haisman
+<A NAME="6"></A> *@created    3. únor 2003
+<A NAME="7"></A> */</FONT>
+<A NAME="8"></A><FONT ID="Abstract">abstract</FONT> <FONT ID="Class">class</FONT> CollectionEntropyAnalyzer <FONT ID="Extends">extends</FONT> <A HREF="EntropyAnalyzer.java.html">EntropyAnalyzer</A> {
+<A NAME="9"></A>    <FONT ID="FormalComment">/**
+<A NAME="10"></A>     *  Vrací pravděpodobnost zdrojové jednotky v kolekci.
+<A NAME="11"></A>     *
+<A NAME="12"></A>     *@param  o  Description of the Parameter
+<A NAME="13"></A>     *@return    Description of the Return Value
+<A NAME="14"></A>     */</FONT>
+<A NAME="15"></A>    <FONT ID="Public">public</FONT> <FONT ID="Abstract">abstract</FONT> <FONT ID="Double">double</FONT> probability(Object o);
+<A NAME="16"></A>
+<A NAME="17"></A>
+<A NAME="18"></A>    <FONT ID="FormalComment">/**
+<A NAME="19"></A>     *  Spočítá frekvence výskytu zdrojových jednotek.
+<A NAME="20"></A>     */</FONT>
+<A NAME="21"></A>    <FONT ID="Public">public</FONT> <FONT ID="Abstract">abstract</FONT> <FONT ID="Void">void</FONT> computeFrequencies();
+<A NAME="22"></A>}
+<A NAME="23"></A>
+<A NAME="24"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">CollectionEntropyAnalyzer.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

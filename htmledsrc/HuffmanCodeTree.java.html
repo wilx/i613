@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.2">
+<TITLE>HuffmanCodeTree (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">HuffmanCodeTree.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="Import">import</FONT> java.util.*;
+<A NAME="2"></A>
+<A NAME="3"></A><FONT ID="FormalComment">/**
+<A NAME="4"></A> *  Třída reprezentující strom Huffmanova kódu.
+<A NAME="5"></A> *
+<A NAME="6"></A> *@author     wilx
+<A NAME="7"></A> *@created    25. leden 2003
+<A NAME="8"></A> */</FONT>
+<A NAME="9"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> HuffmanCodeTree {
+<A NAME="10"></A>    <FONT ID="FormalComment">/**
+<A NAME="11"></A>     *  Kořen stromu Huffmanova kódu.
+<A NAME="12"></A>     */</FONT>
+<A NAME="13"></A>    <FONT ID="Protected">protected</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> root;
+<A NAME="14"></A>
+<A NAME="15"></A>
+<A NAME="16"></A>    <FONT ID="FormalComment">/**
+<A NAME="17"></A>     *  Konstruktor třídy HuffmanCodeTree.
+<A NAME="18"></A>     *
+<A NAME="19"></A>     *@param  probMap  Mapa pravděpodobností výskytu zdrojových jednotek.
+<A NAME="20"></A>     */</FONT>
+<A NAME="21"></A>    <FONT ID="Public">public</FONT> HuffmanCodeTree(Map probMap) {
+<A NAME="22"></A>        <A HREF="PriorityQueue.java.html">PriorityQueue</A> q = <FONT ID="New">new</FONT> <A HREF="PriorityQueue.java.html">PriorityQueue</A>(
+<A NAME="23"></A>            <FONT ID="New">new</FONT> Comparator() {
+<A NAME="24"></A>                <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> compare(Object o1, Object o2) {
+<A NAME="25"></A>                    <FONT ID="If">if</FONT> (((<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) o1).getWeight()
+<A NAME="26"></A>                             &lt; ((<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) o2).getWeight()) {
+<A NAME="27"></A>                        <FONT ID="Return">return</FONT> <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="28"></A>                    }
+<A NAME="29"></A>                    <FONT ID="If">if</FONT> (((<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) o1).getWeight()
+<A NAME="30"></A>                             == ((<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) o2).getWeight()) {
+<A NAME="31"></A>                        <FONT ID="Return">return</FONT> <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="32"></A>                    }
+<A NAME="33"></A>                    <FONT ID="Else">else</FONT> {
+<A NAME="34"></A>                        <FONT ID="Return">return</FONT> -<FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="35"></A>                    }
+<A NAME="36"></A>                }
+<A NAME="37"></A>            });
+<A NAME="38"></A>        Set entries = probMap.entrySet();
+<A NAME="39"></A>        Iterator i = entries.iterator();
+<A NAME="40"></A>        Object o;
+<A NAME="41"></A>
+<A NAME="42"></A>        <FONT ID="MultiLineComment">/*
+<A NAME="43"></A>         *  inicializace prioritni frony
+<A NAME="44"></A>         */</FONT>
+<A NAME="45"></A>        <FONT ID="While">while</FONT> (i.hasNext()) {
+<A NAME="46"></A>            Map.Entry e = (Map.Entry) i.next();
+<A NAME="47"></A>            q.put(<FONT ID="New">new</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>(<FONT ID="New">new</FONT> Double((<FONT ID="Double">double</FONT>) ((Integer) e.getValue()).intValue()),
+<A NAME="48"></A>                    e.getKey()));
+<A NAME="49"></A>        }
+<A NAME="50"></A>
+<A NAME="51"></A>        <FONT ID="MultiLineComment">/*
+<A NAME="52"></A>         *  vytvoreni stromu
+<A NAME="53"></A>         */</FONT>
+<A NAME="54"></A>        <FONT ID="While">while</FONT> (q.size() &gt; <FONT ID="IntegerLiteral">1</FONT>) {
+<A NAME="55"></A>            <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> l;
+<A NAME="56"></A>            <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> r;
+<A NAME="57"></A>            <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> p;
+<A NAME="58"></A>            r = (<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) q.get();
+<A NAME="59"></A>            l = (<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) q.get();
+<A NAME="60"></A>            p = <FONT ID="New">new</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>(r.getWeight() + l.getWeight(), <FONT ID="Null">null</FONT>, l, r);
+<A NAME="61"></A>            q.put(p);
+<A NAME="62"></A>        }
+<A NAME="63"></A>        root = (<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A>) q.get();
+<A NAME="64"></A>    }
+<A NAME="65"></A>
+<A NAME="66"></A>
+<A NAME="67"></A>    <FONT ID="FormalComment">/**
+<A NAME="68"></A>     *  Prochází strom reprezentující Huffmanův kód a konstruuje převodní mapu.
+<A NAME="69"></A>     *
+<A NAME="70"></A>     *@param  node  Procházený uzel stromu.
+<A NAME="71"></A>     *@param  str   �?etězec reprezentující prošlou část mapy.
+<A NAME="72"></A>     *@param  map   Převodní mapa.
+<A NAME="73"></A>     */</FONT>
+<A NAME="74"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> preorder(<A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> node, String str, Map map) {
+<A NAME="75"></A>        <FONT ID="If">if</FONT> (node == <FONT ID="Null">null</FONT>) {
+<A NAME="76"></A>            <FONT ID="Return">return</FONT>;
+<A NAME="77"></A>        }
+<A NAME="78"></A>        <FONT ID="If">if</FONT> (node.getValue() != <FONT ID="Null">null</FONT>) {
+<A NAME="79"></A>            map.put(node.getValue(), str);
+<A NAME="80"></A>        }
+<A NAME="81"></A>        <FONT ID="If">if</FONT> (node.getLeft() != <FONT ID="Null">null</FONT>) {
+<A NAME="82"></A>            preorder(node.getLeft(), str + <FONT ID="StringLiteral">"0"</FONT>, map);
+<A NAME="83"></A>        }
+<A NAME="84"></A>        <FONT ID="If">if</FONT> (node.getRight() != <FONT ID="Null">null</FONT>) {
+<A NAME="85"></A>            preorder(node.getRight(), str + <FONT ID="StringLiteral">"1"</FONT>, map);
+<A NAME="86"></A>        }
+<A NAME="87"></A>    }
+<A NAME="88"></A>
+<A NAME="89"></A>
+<A NAME="90"></A>    <FONT ID="FormalComment">/**
+<A NAME="91"></A>     *  Vrací mapu mapující zdrojové jednotky na kódová slova v Huffmanově kódu.
+<A NAME="92"></A>     *
+<A NAME="93"></A>     *@return    Mapa Huffmanova kódu.
+<A NAME="94"></A>     */</FONT>
+<A NAME="95"></A>    <FONT ID="Public">public</FONT> Map getHuffmanCode() {
+<A NAME="96"></A>        Map map = <FONT ID="New">new</FONT> HashMap();
+<A NAME="97"></A>        preorder(root, <FONT ID="StringLiteral">""</FONT>, map);
+<A NAME="98"></A>        <FONT ID="Return">return</FONT> map;
+<A NAME="99"></A>    }
+<A NAME="100"></A>}
+<A NAME="101"></A>
+<A NAME="102"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">HuffmanCodeTree.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

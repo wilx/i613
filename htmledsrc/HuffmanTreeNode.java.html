@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.2">
+<TITLE>HuffmanTreeNode (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">HuffmanTreeNode.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="FormalComment">/**
+<A NAME="2"></A> *  Třída reprezentující uzel v stromě Huffmanova kódu.
+<A NAME="3"></A> *
+<A NAME="4"></A> *@author     Václav Haisman
+<A NAME="5"></A> *@created    25. leden 2003
+<A NAME="6"></A> */</FONT>
+<A NAME="7"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> HuffmanTreeNode {
+<A NAME="8"></A>
+<A NAME="9"></A>
+<A NAME="10"></A>    <FONT ID="FormalComment">/**
+<A NAME="11"></A>     *  Váha uzlu.
+<A NAME="12"></A>     */</FONT>
+<A NAME="13"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Double">double</FONT> weight;
+<A NAME="14"></A>    <FONT ID="FormalComment">/**
+<A NAME="15"></A>     *  Obsah uzlu.
+<A NAME="16"></A>     */</FONT>
+<A NAME="17"></A>    <FONT ID="Protected">protected</FONT> Object obj;
+<A NAME="18"></A>    <FONT ID="FormalComment">/**
+<A NAME="19"></A>     *  Levý podstrom.
+<A NAME="20"></A>     */</FONT>
+<A NAME="21"></A>    <FONT ID="Protected">protected</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> left;
+<A NAME="22"></A>    <FONT ID="FormalComment">/**
+<A NAME="23"></A>     *  Pravý podstrom.
+<A NAME="24"></A>     */</FONT>
+<A NAME="25"></A>    <FONT ID="Protected">protected</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> right;
+<A NAME="26"></A>
+<A NAME="27"></A>
+<A NAME="28"></A>    <FONT ID="FormalComment">/**
+<A NAME="29"></A>     *  Constructor for the HuffmanTreeNode object
+<A NAME="30"></A>     *
+<A NAME="31"></A>     *@param  w  Váha uzlu.
+<A NAME="32"></A>     *@param  o  Obsah uzlu.
+<A NAME="33"></A>     *@param  l  Levý podstrom.
+<A NAME="34"></A>     *@param  r  Pravý podstrom.
+<A NAME="35"></A>     */</FONT>
+<A NAME="36"></A>    <FONT ID="Public">public</FONT> HuffmanTreeNode(<FONT ID="Double">double</FONT> w, Object o, <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> l, <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> r) {
+<A NAME="37"></A>        weight = w;
+<A NAME="38"></A>        left = l;
+<A NAME="39"></A>        right = r;
+<A NAME="40"></A>        obj = o;
+<A NAME="41"></A>    }
+<A NAME="42"></A>
+<A NAME="43"></A>
+<A NAME="44"></A>    <FONT ID="FormalComment">/**
+<A NAME="45"></A>     *  Constructor for the HuffmanTreeNode object
+<A NAME="46"></A>     *
+<A NAME="47"></A>     *@param  w  Váha uzlu.
+<A NAME="48"></A>     *@param  o  Obsah uzlu.
+<A NAME="49"></A>     *@param  l  Levý podstrom.
+<A NAME="50"></A>     *@param  r  Pravý podstrom.
+<A NAME="51"></A>     */</FONT>
+<A NAME="52"></A>    <FONT ID="Public">public</FONT> HuffmanTreeNode(Double w, Object o, <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> l, <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> r) {
+<A NAME="53"></A>        <FONT ID="This">this</FONT>(w.doubleValue(), o, l, r);
+<A NAME="54"></A>    }
+<A NAME="55"></A>
+<A NAME="56"></A>
+<A NAME="57"></A>    <FONT ID="FormalComment">/**
+<A NAME="58"></A>     *  Constructor for the HuffmanTreeNode object
+<A NAME="59"></A>     *
+<A NAME="60"></A>     *@param  w  Váha uzlu.
+<A NAME="61"></A>     *@param  o  Obsah uzlu.
+<A NAME="62"></A>     */</FONT>
+<A NAME="63"></A>    <FONT ID="Public">public</FONT> HuffmanTreeNode(<FONT ID="Double">double</FONT> w, Object o) {
+<A NAME="64"></A>        weight = w;
+<A NAME="65"></A>        left = right = <FONT ID="Null">null</FONT>;
+<A NAME="66"></A>        obj = o;
+<A NAME="67"></A>    }
+<A NAME="68"></A>
+<A NAME="69"></A>
+<A NAME="70"></A>    <FONT ID="FormalComment">/**
+<A NAME="71"></A>     *  Constructor for the HuffmanTreeNode object
+<A NAME="72"></A>     *
+<A NAME="73"></A>     *@param  w  Váha uzlu.
+<A NAME="74"></A>     *@param  o  Obsah uzlu.
+<A NAME="75"></A>     */</FONT>
+<A NAME="76"></A>    <FONT ID="Public">public</FONT> HuffmanTreeNode(Double w, Object o) {
+<A NAME="77"></A>        <FONT ID="This">this</FONT>(w.doubleValue(), o);
+<A NAME="78"></A>    }
+<A NAME="79"></A>
+<A NAME="80"></A>
+<A NAME="81"></A>    <FONT ID="FormalComment">/**
+<A NAME="82"></A>     *  Vrací váhu uzlu.
+<A NAME="83"></A>     *
+<A NAME="84"></A>     *@return    Váha uzlu.
+<A NAME="85"></A>     */</FONT>
+<A NAME="86"></A>    <FONT ID="Public">public</FONT> <FONT ID="Double">double</FONT> getWeight() {
+<A NAME="87"></A>        <FONT ID="Return">return</FONT> weight;
+<A NAME="88"></A>    }
+<A NAME="89"></A>
+<A NAME="90"></A>
+<A NAME="91"></A>    <FONT ID="FormalComment">/**
+<A NAME="92"></A>     *  Vrací levý podstrom.
+<A NAME="93"></A>     *
+<A NAME="94"></A>     *@return    Levý podstrom.
+<A NAME="95"></A>     */</FONT>
+<A NAME="96"></A>    <FONT ID="Public">public</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> getLeft() {
+<A NAME="97"></A>        <FONT ID="Return">return</FONT> left;
+<A NAME="98"></A>    }
+<A NAME="99"></A>
+<A NAME="100"></A>
+<A NAME="101"></A>    <FONT ID="FormalComment">/**
+<A NAME="102"></A>     *  Vrací pravý podstrom.
+<A NAME="103"></A>     *
+<A NAME="104"></A>     *@return    Pravý podstrom.
+<A NAME="105"></A>     */</FONT>
+<A NAME="106"></A>    <FONT ID="Public">public</FONT> <A HREF="HuffmanTreeNode.java.html">HuffmanTreeNode</A> getRight() {
+<A NAME="107"></A>        <FONT ID="Return">return</FONT> right;
+<A NAME="108"></A>    }
+<A NAME="109"></A>
+<A NAME="110"></A>
+<A NAME="111"></A>    <FONT ID="FormalComment">/**
+<A NAME="112"></A>     *  Vrací obsah uzlu.
+<A NAME="113"></A>     *
+<A NAME="114"></A>     *@return    Obsah uzlu.
+<A NAME="115"></A>     */</FONT>
+<A NAME="116"></A>    <FONT ID="Public">public</FONT> Object getValue() {
+<A NAME="117"></A>        <FONT ID="Return">return</FONT> obj;
+<A NAME="118"></A>    }
+<A NAME="119"></A>}
+<A NAME="120"></A>
+<A NAME="121"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">HuffmanTreeNode.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

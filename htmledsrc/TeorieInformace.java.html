@@ -1,0 +1,518 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.2">
+<TITLE>TeorieInformace (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">TeorieInformace.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="Import">import</FONT> java.awt.event.*;
+<A NAME="2"></A><FONT ID="Import">import</FONT> java.awt.*;
+<A NAME="3"></A><FONT ID="Import">import</FONT> javax.swing.*;
+<A NAME="4"></A><FONT ID="Import">import</FONT> javax.swing.border.*;
+<A NAME="5"></A><FONT ID="Import">import</FONT> javax.swing.event.*;
+<A NAME="6"></A><FONT ID="Import">import</FONT> javax.swing.table.*;
+<A NAME="7"></A><FONT ID="Import">import</FONT> javax.swing.text.*;
+<A NAME="8"></A><FONT ID="Import">import</FONT> java.util.*;
+<A NAME="9"></A><FONT ID="Import">import</FONT> java.text.DecimalFormat;
+<A NAME="10"></A>
+<A NAME="11"></A><FONT ID="FormalComment">/**
+<A NAME="12"></A> *  Hlavní třída appletu Teorie informace.
+<A NAME="13"></A> *
+<A NAME="14"></A> *@author     Václav Haisman
+<A NAME="15"></A> *@created    25. leden 2003
+<A NAME="16"></A> */</FONT>
+<A NAME="17"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> TeorieInformace <FONT ID="Extends">extends</FONT> JApplet {
+<A NAME="18"></A>    <FONT ID="Protected">protected</FONT> JPanel contentPane;
+<A NAME="19"></A>    <FONT ID="Protected">protected</FONT> JPanel panel;
+<A NAME="20"></A>    <FONT ID="Protected">protected</FONT> JLabel lblAvgEnt, lblMsgEnt, lblMsgLen, lblMsgHuffLen,
+<A NAME="21"></A>            lblMsgRed, lblMsgHuffRed, lblCWordLen, lblCWordHuffLen,
+<A NAME="22"></A>            lblAvgRedASCII, lblAvgRedHuff;
+<A NAME="23"></A>    <FONT ID="Protected">protected</FONT> <A HREF="CharArrayEntropyAnalyzer.java.html">CharArrayEntropyAnalyzer</A> ea;
+<A NAME="24"></A>    <FONT ID="Protected">protected</FONT> MyTableModel model;
+<A NAME="25"></A>    <FONT ID="Private">private</FONT> <FONT ID="Static">static</FONT> DecimalFormat df = <FONT ID="New">new</FONT> DecimalFormat(<FONT ID="StringLiteral">"###.###"</FONT>);
+<A NAME="26"></A>
+<A NAME="27"></A>
+<A NAME="28"></A>    <FONT ID="FormalComment">/**
+<A NAME="29"></A>     *  Třída implementující DocumentListener pro vstupní pole.
+<A NAME="30"></A>     *
+<A NAME="31"></A>     *@author     Václav Haisman
+<A NAME="32"></A>     *@created    25. leden 2003
+<A NAME="33"></A>     */</FONT>
+<A NAME="34"></A>    <FONT ID="Class">class</FONT> TextAreaListener <FONT ID="Implements">implements</FONT> DocumentListener {
+<A NAME="35"></A>        <FONT ID="FormalComment">/**
+<A NAME="36"></A>         *  Description of the Method
+<A NAME="37"></A>         *
+<A NAME="38"></A>         *@param  e  Description of the Parameter
+<A NAME="39"></A>         */</FONT>
+<A NAME="40"></A>        <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> changedUpdate(DocumentEvent e) {
+<A NAME="41"></A>            handler(e);
+<A NAME="42"></A>        }
+<A NAME="43"></A>
+<A NAME="44"></A>
+<A NAME="45"></A>        <FONT ID="FormalComment">/**
+<A NAME="46"></A>         *  Description of the Method
+<A NAME="47"></A>         *
+<A NAME="48"></A>         *@param  e  Description of the Parameter
+<A NAME="49"></A>         */</FONT>
+<A NAME="50"></A>        <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> insertUpdate(DocumentEvent e) {
+<A NAME="51"></A>            handler(e);
+<A NAME="52"></A>        }
+<A NAME="53"></A>
+<A NAME="54"></A>
+<A NAME="55"></A>        <FONT ID="FormalComment">/**
+<A NAME="56"></A>         *  Description of the Method
+<A NAME="57"></A>         *
+<A NAME="58"></A>         *@param  e  Description of the Parameter
+<A NAME="59"></A>         */</FONT>
+<A NAME="60"></A>        <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> removeUpdate(DocumentEvent e) {
+<A NAME="61"></A>            handler(e);
+<A NAME="62"></A>        }
+<A NAME="63"></A>
+<A NAME="64"></A>
+<A NAME="65"></A>        <FONT ID="FormalComment">/**
+<A NAME="66"></A>         *  Tato metoda vezme text ze vstupního textového pole a posle ho
+<A NAME="67"></A>         *  modelu tabulky. Také provede přepočítání charakteristických hodnot.
+<A NAME="68"></A>         *
+<A NAME="69"></A>         *@param  e  DocumentEvent
+<A NAME="70"></A>         */</FONT>
+<A NAME="71"></A>        <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> handler(DocumentEvent e) {
+<A NAME="72"></A>            <FONT ID="Int">int</FONT> i;
+<A NAME="73"></A>            Document doc = e.getDocument();
+<A NAME="74"></A>            String text;
+<A NAME="75"></A>            <FONT ID="Try">try</FONT> {
+<A NAME="76"></A>                text = doc.getText(<FONT ID="IntegerLiteral">0</FONT>, doc.getLength());
+<A NAME="77"></A>            } <FONT ID="Catch">catch</FONT> (BadLocationException ex) {
+<A NAME="78"></A>                System.err.println(<FONT ID="StringLiteral">"Exceprion: "</FONT> + ex);
+<A NAME="79"></A>                <FONT ID="Return">return</FONT>;
+<A NAME="80"></A>            }
+<A NAME="81"></A>            <FONT ID="SingleLineComment">// update tabulky
+<A NAME="82"></A></FONT>            <FONT ID="Char">char</FONT>[] znaky = text.toUpperCase().toCharArray();
+<A NAME="83"></A>            Arrays.sort(znaky);
+<A NAME="84"></A>            ea = <FONT ID="New">new</FONT> <A HREF="CharArrayEntropyAnalyzer.java.html">CharArrayEntropyAnalyzer</A>(znaky);
+<A NAME="85"></A>            model.update(znaky);
+<A NAME="86"></A>            <FONT ID="SingleLineComment">// update ostatnich hodnot
+<A NAME="87"></A></FONT>            <FONT ID="SingleLineComment">// prumenrna entropie
+<A NAME="88"></A></FONT>            lblAvgEnt.setText(df.format(ea.averageEntropy() == (<FONT ID="Double">double</FONT>) -<FONT ID="FloatPointLiteral">0.0</FONT>
+<A NAME="89"></A>                     ? <FONT ID="FloatPointLiteral">0.0</FONT> : ea.averageEntropy()) + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="90"></A>            <FONT ID="Char">char</FONT>[] m = text.toUpperCase().toCharArray();
+<A NAME="91"></A>            Object[] msg = <FONT ID="New">new</FONT> Object[m.length];
+<A NAME="92"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; m.length; ++i) {
+<A NAME="93"></A>                msg[i] = <FONT ID="New">new</FONT> Character(m[i]);
+<A NAME="94"></A>            }
+<A NAME="95"></A>            <FONT ID="Double">double</FONT> msgEnt = ea.messageEntropy(msg);
+<A NAME="96"></A>            <FONT ID="If">if</FONT> (msgEnt == (<FONT ID="Double">double</FONT>) -<FONT ID="FloatPointLiteral">0.0</FONT>) {
+<A NAME="97"></A>                msgEnt = <FONT ID="FloatPointLiteral">0.0</FONT>;
+<A NAME="98"></A>            }
+<A NAME="99"></A>            <FONT ID="SingleLineComment">// entropie zpravy
+<A NAME="100"></A></FONT>            lblMsgEnt.setText(df.format(msgEnt) + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="101"></A>            <FONT ID="SingleLineComment">// delka zpravy
+<A NAME="102"></A></FONT>            lblMsgLen.setText((doc.getLength() * <FONT ID="IntegerLiteral">8</FONT>) + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="103"></A>            <FONT ID="Int">int</FONT> len = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="104"></A>            <A HREF="HuffmanCodeTree.java.html">HuffmanCodeTree</A> huff = <FONT ID="New">new</FONT> <A HREF="HuffmanCodeTree.java.html">HuffmanCodeTree</A>(ea.getFrequenciesMap());
+<A NAME="105"></A>            Map huffkod = huff.getHuffmanCode();
+<A NAME="106"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; msg.length; ++i) {
+<A NAME="107"></A>                String s = (String) huffkod.get(msg[i]);
+<A NAME="108"></A>                len += s.length();
+<A NAME="109"></A>            }
+<A NAME="110"></A>            <FONT ID="SingleLineComment">// delka zpravy v Huffmanove kodu
+<A NAME="111"></A></FONT>            lblMsgHuffLen.setText(len + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="112"></A>            <FONT ID="SingleLineComment">// redundance ASCII kodu zpravy
+<A NAME="113"></A></FONT>            lblMsgRed.setText(df.format(doc.getLength() * <FONT ID="IntegerLiteral">8</FONT> - msgEnt) + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="114"></A>            <FONT ID="SingleLineComment">// redundance Huffmanova kodu zpravy
+<A NAME="115"></A></FONT>            lblMsgHuffRed.setText(df.format(len - msgEnt) + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="116"></A>            <FONT ID="SingleLineComment">// prumerna delka slova ASCII kodu zpravy
+<A NAME="117"></A></FONT>            <FONT ID="Double">double</FONT> avgwordlen = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="118"></A>            Object[] klice = huffkod.keySet().toArray();
+<A NAME="119"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="120"></A>                avgwordlen += <FONT ID="IntegerLiteral">8</FONT> * ea.probability(klice[i]);
+<A NAME="121"></A>            }
+<A NAME="122"></A>            lblCWordLen.setText(df.format(avgwordlen) + <FONT ID="StringLiteral">" bitů"</FONT>);
+<A NAME="123"></A>            <FONT ID="SingleLineComment">// prumerna delka slova Huffmanova kodu zpravy
+<A NAME="124"></A></FONT>            <FONT ID="Double">double</FONT> avgwordhufflen = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="125"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="126"></A>                avgwordhufflen += ((String)huffkod.get(klice[i])).length() 
+<A NAME="127"></A>                                  * ea.probability(klice[i]);
+<A NAME="128"></A>            }
+<A NAME="129"></A>            lblCWordHuffLen.setText(df.format(avgwordhufflen));
+<A NAME="130"></A>            <FONT ID="SingleLineComment">// prumerna redundance ASCII kodu
+<A NAME="131"></A></FONT>            lblAvgRedASCII.setText(df.format(avgwordlen - ea.averageEntropy()));
+<A NAME="132"></A>            <FONT ID="SingleLineComment">// prumerna redundance Huffmanova kodu
+<A NAME="133"></A></FONT>            lblAvgRedHuff.setText(df.format(avgwordhufflen - ea.averageEntropy()));
+<A NAME="134"></A>        }
+<A NAME="135"></A>    }
+<A NAME="136"></A>
+<A NAME="137"></A>
+<A NAME="138"></A>    <FONT ID="FormalComment">/**
+<A NAME="139"></A>     *  Tato trida implementuje model tabulky zobrazující charakteristiké hodnoty
+<A NAME="140"></A>     *  jednotlivých zdrojových jednotek.
+<A NAME="141"></A>     *
+<A NAME="142"></A>     *@author     wilx
+<A NAME="143"></A>     *@created    25. leden 2003
+<A NAME="144"></A>     */</FONT>
+<A NAME="145"></A>    <FONT ID="Class">class</FONT> MyTableModel <FONT ID="Extends">extends</FONT> AbstractTableModel {
+<A NAME="146"></A>        Vector sloupce = <FONT ID="New">new</FONT> Vector();
+<A NAME="147"></A>        Vector data = <FONT ID="New">new</FONT> Vector();
+<A NAME="148"></A>
+<A NAME="149"></A>
+<A NAME="150"></A>        <FONT ID="FormalComment">/**
+<A NAME="151"></A>         *  Constructor for the MyTableModel object
+<A NAME="152"></A>         */</FONT>
+<A NAME="153"></A>        <FONT ID="Public">public</FONT> MyTableModel() {
+<A NAME="154"></A>            <FONT ID="Super">super</FONT>();
+<A NAME="155"></A>            sloupce.add(<FONT ID="StringLiteral">"Default"</FONT>);
+<A NAME="156"></A>        }
+<A NAME="157"></A>
+<A NAME="158"></A>
+<A NAME="159"></A>        <FONT ID="FormalComment">/**
+<A NAME="160"></A>         *  Metoda update provádí prepočítání a zobrazení charakteristických hodnot
+<A NAME="161"></A>         *  zdrojových jednotek z předaného bufferu.
+<A NAME="162"></A>         *
+<A NAME="163"></A>         *@param  znaky  Buffer analyzované zprávy.
+<A NAME="164"></A>         */</FONT>
+<A NAME="165"></A>        <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> update(<FONT ID="Char">char</FONT>[] znaky) {
+<A NAME="166"></A>            <FONT ID="Int">int</FONT> i;
+<A NAME="167"></A>
+<A NAME="168"></A>            data = <FONT ID="New">new</FONT> Vector();
+<A NAME="169"></A>            sloupce = <FONT ID="New">new</FONT> Vector();
+<A NAME="170"></A>            Map freq = ea.getFrequenciesMap();
+<A NAME="171"></A>            Object[] klice = freq.keySet().toArray();
+<A NAME="172"></A>            Arrays.sort(klice);
+<A NAME="173"></A>            <FONT ID="SingleLineComment">// zahlavi
+<A NAME="174"></A></FONT>            sloupce.add(<FONT ID="StringLiteral">"Názvy"</FONT>);
+<A NAME="175"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="176"></A>                sloupce.add(klice[i].toString());
+<A NAME="177"></A>            }
+<A NAME="178"></A>            <FONT ID="SingleLineComment">// radek pravdepodobnosti
+<A NAME="179"></A></FONT>            Vector radek = <FONT ID="New">new</FONT> Vector();
+<A NAME="180"></A>            radek.add(<FONT ID="StringLiteral">"Pravděpodobnost"</FONT>);
+<A NAME="181"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="182"></A>                <FONT ID="Double">double</FONT> p = ea.probability((Character) klice[i]);
+<A NAME="183"></A>                radek.add(df.format(p));
+<A NAME="184"></A>            }
+<A NAME="185"></A>            data.add(radek);
+<A NAME="186"></A>            <FONT ID="SingleLineComment">// radek entropie
+<A NAME="187"></A></FONT>            radek = <FONT ID="New">new</FONT> Vector();
+<A NAME="188"></A>            radek.add(<FONT ID="StringLiteral">"Entropie"</FONT>);
+<A NAME="189"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="190"></A>                <FONT ID="Double">double</FONT> e = ea.entropy(klice[i]);
+<A NAME="191"></A>                e = e == (<FONT ID="Double">double</FONT>)-<FONT ID="FloatPointLiteral">0.0</FONT> ? <FONT ID="FloatPointLiteral">0.0</FONT> : e;
+<A NAME="192"></A>                radek.add(df.format(e));
+<A NAME="193"></A>            }
+<A NAME="194"></A>            data.add(radek);
+<A NAME="195"></A>            <FONT ID="SingleLineComment">// radek delky Huffmanova kodu pro dany znak
+<A NAME="196"></A></FONT>            radek = <FONT ID="New">new</FONT> Vector();
+<A NAME="197"></A>            radek.add(<FONT ID="StringLiteral">"Délka Huffmanova kódu"</FONT>);
+<A NAME="198"></A>            <A HREF="HuffmanCodeTree.java.html">HuffmanCodeTree</A> huff = <FONT ID="New">new</FONT> <A HREF="HuffmanCodeTree.java.html">HuffmanCodeTree</A>(ea.getFrequenciesMap());
+<A NAME="199"></A>            Map huffkod = huff.getHuffmanCode();
+<A NAME="200"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="201"></A>                String s = (String) huffkod.get(klice[i]);
+<A NAME="202"></A>                radek.add(Integer.toString(s.length()));
+<A NAME="203"></A>            }
+<A NAME="204"></A>            data.add(radek);
+<A NAME="205"></A>            <FONT ID="SingleLineComment">// radek vlastniho Huffmanova kodu pro dany znak
+<A NAME="206"></A></FONT>            radek = <FONT ID="New">new</FONT> Vector();
+<A NAME="207"></A>            radek.add(<FONT ID="StringLiteral">"Huffmanův kód"</FONT>);
+<A NAME="208"></A>            <FONT ID="For">for</FONT> (i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; klice.length; ++i) {
+<A NAME="209"></A>                radek.add(huffkod.get(klice[i]));
+<A NAME="210"></A>            }
+<A NAME="211"></A>            data.add(radek);
+<A NAME="212"></A>
+<A NAME="213"></A>            fireTableStructureChanged();
+<A NAME="214"></A>        }
+<A NAME="215"></A>
+<A NAME="216"></A>
+<A NAME="217"></A>        <FONT ID="FormalComment">/**
+<A NAME="218"></A>         *  Gets the columnCount attribute of the MyTableModel object
+<A NAME="219"></A>         *
+<A NAME="220"></A>         *@return    The columnCount value
+<A NAME="221"></A>         */</FONT>
+<A NAME="222"></A>        <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> getColumnCount() {
+<A NAME="223"></A>            <FONT ID="Return">return</FONT> sloupce.size();
+<A NAME="224"></A>        }
+<A NAME="225"></A>
+<A NAME="226"></A>
+<A NAME="227"></A>        <FONT ID="FormalComment">/**
+<A NAME="228"></A>         *  Gets the rowCount attribute of the MyTableModel object
+<A NAME="229"></A>         *
+<A NAME="230"></A>         *@return    The rowCount value
+<A NAME="231"></A>         */</FONT>
+<A NAME="232"></A>        <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> getRowCount() {
+<A NAME="233"></A>            <FONT ID="Return">return</FONT> data.size();
+<A NAME="234"></A>        }
+<A NAME="235"></A>
+<A NAME="236"></A>
+<A NAME="237"></A>        <FONT ID="FormalComment">/**
+<A NAME="238"></A>         *  Gets the columnName attribute of the MyTableModel object
+<A NAME="239"></A>         *
+<A NAME="240"></A>         *@param  col  Description of the Parameter
+<A NAME="241"></A>         *@return      The columnName value
+<A NAME="242"></A>         */</FONT>
+<A NAME="243"></A>        <FONT ID="Public">public</FONT> String getColumnName(<FONT ID="Int">int</FONT> col) {
+<A NAME="244"></A>            <FONT ID="Return">return</FONT> (String) sloupce.elementAt(col);
+<A NAME="245"></A>        }
+<A NAME="246"></A>
+<A NAME="247"></A>
+<A NAME="248"></A>        <FONT ID="FormalComment">/**
+<A NAME="249"></A>         *  Gets the valueAt attribute of the MyTableModel object
+<A NAME="250"></A>         *
+<A NAME="251"></A>         *@param  row  Description of the Parameter
+<A NAME="252"></A>         *@param  col  Description of the Parameter
+<A NAME="253"></A>         *@return      The valueAt value
+<A NAME="254"></A>         */</FONT>
+<A NAME="255"></A>        <FONT ID="Public">public</FONT> Object getValueAt(<FONT ID="Int">int</FONT> row, <FONT ID="Int">int</FONT> col) {
+<A NAME="256"></A>            Vector r = (Vector) data.elementAt(row);
+<A NAME="257"></A>            Object o = r.elementAt(col);
+<A NAME="258"></A>            <FONT ID="Return">return</FONT> o;
+<A NAME="259"></A>            <FONT ID="SingleLineComment">//return ((Vector)data.elementAt(row)).elementAt(col);
+<A NAME="260"></A></FONT>        }
+<A NAME="261"></A>
+<A NAME="262"></A>
+<A NAME="263"></A>        <FONT ID="FormalComment">/**
+<A NAME="264"></A>         *  Gets the columnClass attribute of the MyTableModel object
+<A NAME="265"></A>         *
+<A NAME="266"></A>         *@param  c  Description of the Parameter
+<A NAME="267"></A>         *@return    The columnClass value
+<A NAME="268"></A>         */</FONT>
+<A NAME="269"></A>        <FONT ID="Public">public</FONT> Class getColumnClass(<FONT ID="Int">int</FONT> c) {
+<A NAME="270"></A>            <FONT ID="Return">return</FONT> getValueAt(<FONT ID="IntegerLiteral">0</FONT>, c).getClass();
+<A NAME="271"></A>        }
+<A NAME="272"></A>    }
+<A NAME="273"></A>
+<A NAME="274"></A>
+<A NAME="275"></A>    <FONT ID="FormalComment">/**
+<A NAME="276"></A>     *  Kostruktor tridy TeorieInformace
+<A NAME="277"></A>     */</FONT>
+<A NAME="278"></A>    <FONT ID="Public">public</FONT> TeorieInformace() {
+<A NAME="279"></A>        <FONT ID="Super">super</FONT>();
+<A NAME="280"></A>        init();
+<A NAME="281"></A>    }
+<A NAME="282"></A>
+<A NAME="283"></A>
+<A NAME="284"></A>    <FONT ID="FormalComment">/**
+<A NAME="285"></A>     *  Incializační metoda appletu.
+<A NAME="286"></A>     */</FONT>
+<A NAME="287"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> init() {
+<A NAME="288"></A>        panel = <FONT ID="New">new</FONT> JPanel(<FONT ID="New">new</FONT> BorderLayout());
+<A NAME="289"></A>        contentPane = (JPanel) <FONT ID="This">this</FONT>.getContentPane();
+<A NAME="290"></A>        contentPane.add(panel);
+<A NAME="291"></A>
+<A NAME="292"></A>        createCenter();
+<A NAME="293"></A>        createEast();
+<A NAME="294"></A>        createSouth();
+<A NAME="295"></A>    }
+<A NAME="296"></A>
+<A NAME="297"></A>
+<A NAME="298"></A>    <FONT ID="FormalComment">/**
+<A NAME="299"></A>     *  Vytvoří centrální část okna programu, tabulka charakteristik jednotlivých písmen.
+<A NAME="300"></A>     */</FONT>
+<A NAME="301"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> createCenter() {
+<A NAME="302"></A>        JPanel center = <FONT ID="New">new</FONT> JPanel(<FONT ID="New">new</FONT> GridLayout());
+<A NAME="303"></A>        model = <FONT ID="New">new</FONT> MyTableModel();
+<A NAME="304"></A>        JTable table = <FONT ID="New">new</FONT> JTable(model);
+<A NAME="305"></A>        
+<A NAME="306"></A>        JScrollPane sp = <FONT ID="New">new</FONT> JScrollPane(table);
+<A NAME="307"></A>
+<A NAME="308"></A>        center.add(sp);
+<A NAME="309"></A>        center.setBorder(BorderFactory.createTitledBorder
+<A NAME="310"></A>                         (<FONT ID="StringLiteral">"Tabulka charackteristických hodnot"</FONT>));
+<A NAME="311"></A>        panel.add(center);
+<A NAME="312"></A>    }
+<A NAME="313"></A>
+<A NAME="314"></A>
+<A NAME="315"></A>    <FONT ID="FormalComment">/**
+<A NAME="316"></A>     *  Vytvoří východní část hlavního okna programu, hodnoty a jejich názvy.
+<A NAME="317"></A>     */</FONT>
+<A NAME="318"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> createEast() {
+<A NAME="319"></A>        GridBagLayout gridbag = <FONT ID="New">new</FONT> GridBagLayout();
+<A NAME="320"></A>        GridBagConstraints c = <FONT ID="New">new</FONT> GridBagConstraints();
+<A NAME="321"></A>        JPanel east = <FONT ID="New">new</FONT> JPanel(gridbag);
+<A NAME="322"></A>        JComponent comp;
+<A NAME="323"></A>        Border empty = BorderFactory.createEmptyBorder(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">3</FONT>);
+<A NAME="324"></A>
+<A NAME="325"></A>        <FONT ID="SingleLineComment">//
+<A NAME="326"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="327"></A>        c.weightx = <FONT ID="FloatPointLiteral">1.0</FONT>;
+<A NAME="328"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Průměrná entropie jednotky:"</FONT>);
+<A NAME="329"></A>        comp.setBorder(empty);
+<A NAME="330"></A>        gridbag.setConstraints(comp, c);
+<A NAME="331"></A>        east.add(comp);
+<A NAME="332"></A>
+<A NAME="333"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="334"></A>        lblAvgEnt = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="335"></A>        gridbag.setConstraints(lblAvgEnt, c);
+<A NAME="336"></A>        east.add(lblAvgEnt);
+<A NAME="337"></A>
+<A NAME="338"></A>        <FONT ID="SingleLineComment">//
+<A NAME="339"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="340"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="341"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Entropie zprávy:"</FONT>);
+<A NAME="342"></A>        comp.setBorder(empty);
+<A NAME="343"></A>        gridbag.setConstraints(comp, c);
+<A NAME="344"></A>        east.add(comp);
+<A NAME="345"></A>
+<A NAME="346"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="347"></A>        lblMsgEnt = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="348"></A>        gridbag.setConstraints(lblMsgEnt, c);
+<A NAME="349"></A>        east.add(lblMsgEnt);
+<A NAME="350"></A>
+<A NAME="351"></A>        <FONT ID="SingleLineComment">//
+<A NAME="352"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="353"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="354"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Délka zprávy v ASCII kódu:"</FONT>);
+<A NAME="355"></A>        comp.setBorder(empty);
+<A NAME="356"></A>        gridbag.setConstraints(comp, c);
+<A NAME="357"></A>        east.add(comp);
+<A NAME="358"></A>
+<A NAME="359"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="360"></A>        lblMsgLen = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="361"></A>        gridbag.setConstraints(lblMsgLen, c);
+<A NAME="362"></A>        east.add(lblMsgLen);
+<A NAME="363"></A>
+<A NAME="364"></A>        <FONT ID="SingleLineComment">//
+<A NAME="365"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="366"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="367"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Délka zprávy v Huffmanově kódu:"</FONT>);
+<A NAME="368"></A>        comp.setBorder(empty);
+<A NAME="369"></A>        gridbag.setConstraints(comp, c);
+<A NAME="370"></A>        east.add(comp);
+<A NAME="371"></A>
+<A NAME="372"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="373"></A>        lblMsgHuffLen = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="374"></A>        gridbag.setConstraints(lblMsgHuffLen, c);
+<A NAME="375"></A>        east.add(lblMsgHuffLen);
+<A NAME="376"></A>
+<A NAME="377"></A>        <FONT ID="SingleLineComment">//
+<A NAME="378"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="379"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="380"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Redundance ASCII kódu zprávy:"</FONT>);
+<A NAME="381"></A>        comp.setBorder(empty);
+<A NAME="382"></A>        gridbag.setConstraints(comp, c);
+<A NAME="383"></A>        east.add(comp);
+<A NAME="384"></A>
+<A NAME="385"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="386"></A>        lblMsgRed = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="387"></A>        gridbag.setConstraints(lblMsgRed, c);
+<A NAME="388"></A>        east.add(lblMsgRed);
+<A NAME="389"></A>
+<A NAME="390"></A>        <FONT ID="SingleLineComment">//
+<A NAME="391"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="392"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="393"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Redundance Huffmanova kódu zprávy:"</FONT>);
+<A NAME="394"></A>        comp.setBorder(empty);
+<A NAME="395"></A>        gridbag.setConstraints(comp, c);
+<A NAME="396"></A>        east.add(comp);
+<A NAME="397"></A>
+<A NAME="398"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="399"></A>        lblMsgHuffRed = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="400"></A>        gridbag.setConstraints(lblMsgHuffRed, c);
+<A NAME="401"></A>        east.add(lblMsgHuffRed);
+<A NAME="402"></A>
+<A NAME="403"></A>        <FONT ID="SingleLineComment">//
+<A NAME="404"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="405"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="406"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Průměrná délka slova ASCII kódu:"</FONT>);
+<A NAME="407"></A>        comp.setBorder(empty);
+<A NAME="408"></A>        gridbag.setConstraints(comp, c);
+<A NAME="409"></A>        east.add(comp);
+<A NAME="410"></A>        
+<A NAME="411"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="412"></A>        lblCWordLen = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="413"></A>        gridbag.setConstraints(lblCWordLen, c);
+<A NAME="414"></A>        east.add(lblCWordLen);
+<A NAME="415"></A>        
+<A NAME="416"></A>        <FONT ID="SingleLineComment">//
+<A NAME="417"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="418"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="419"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Průměrná délka slova Huffmanova kódu:"</FONT>);
+<A NAME="420"></A>        comp.setBorder(empty);
+<A NAME="421"></A>        gridbag.setConstraints(comp, c);
+<A NAME="422"></A>        east.add(comp);
+<A NAME="423"></A>        
+<A NAME="424"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="425"></A>        lblCWordHuffLen = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="426"></A>        gridbag.setConstraints(lblCWordHuffLen, c);
+<A NAME="427"></A>        east.add(lblCWordHuffLen);
+<A NAME="428"></A>        
+<A NAME="429"></A>        <FONT ID="SingleLineComment">//
+<A NAME="430"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="431"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="432"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Průměrná redundance ASCII kódu:"</FONT>);
+<A NAME="433"></A>        comp.setBorder(empty);
+<A NAME="434"></A>        gridbag.setConstraints(comp, c);
+<A NAME="435"></A>        east.add(comp);
+<A NAME="436"></A>        
+<A NAME="437"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="438"></A>        lblAvgRedASCII = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="439"></A>        gridbag.setConstraints(lblAvgRedASCII, c);
+<A NAME="440"></A>        east.add(lblAvgRedASCII);
+<A NAME="441"></A>        
+<A NAME="442"></A>        <FONT ID="SingleLineComment">//
+<A NAME="443"></A></FONT>        c.fill = GridBagConstraints.BOTH;
+<A NAME="444"></A>        c.gridwidth = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="445"></A>        comp = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"Průměrná redundance Huffmanova kódu:"</FONT>);
+<A NAME="446"></A>        comp.setBorder(empty);
+<A NAME="447"></A>        gridbag.setConstraints(comp, c);
+<A NAME="448"></A>        east.add(comp);
+<A NAME="449"></A>        
+<A NAME="450"></A>        c.gridwidth = GridBagConstraints.REMAINDER;
+<A NAME="451"></A>        lblAvgRedHuff = <FONT ID="New">new</FONT> JLabel(<FONT ID="StringLiteral">"- bitů"</FONT>);
+<A NAME="452"></A>        gridbag.setConstraints(lblAvgRedHuff, c);
+<A NAME="453"></A>        east.add(lblAvgRedHuff);
+<A NAME="454"></A>        
+<A NAME="455"></A>        east.setBorder(BorderFactory.createTitledBorder(<FONT ID="StringLiteral">"Analýza"</FONT>));
+<A NAME="456"></A>        panel.add(east, BorderLayout.EAST);
+<A NAME="457"></A>    }
+<A NAME="458"></A>
+<A NAME="459"></A>
+<A NAME="460"></A>    <FONT ID="FormalComment">/**
+<A NAME="461"></A>     *  Vytvoří obsah jižního panelu hlavního okna programu, textové pole.
+<A NAME="462"></A>     */</FONT>
+<A NAME="463"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> createSouth() {
+<A NAME="464"></A>        JPanel south = <FONT ID="New">new</FONT> JPanel(<FONT ID="New">new</FONT> GridLayout());
+<A NAME="465"></A>        JTextArea input = <FONT ID="New">new</FONT> JTextArea(<FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">50</FONT>);
+<A NAME="466"></A>        JScrollPane sp = <FONT ID="New">new</FONT> JScrollPane(input);
+<A NAME="467"></A>        input.getDocument().addDocumentListener(<FONT ID="New">new</FONT> TextAreaListener());
+<A NAME="468"></A>        south.add(sp);
+<A NAME="469"></A>        south.setBorder(BorderFactory.createTitledBorder(<FONT ID="StringLiteral">"Zpráva"</FONT>));
+<A NAME="470"></A>
+<A NAME="471"></A>        panel.add(south, BorderLayout.SOUTH);
+<A NAME="472"></A>    }
+<A NAME="473"></A>
+<A NAME="474"></A>
+<A NAME="475"></A>    <FONT ID="FormalComment">/**
+<A NAME="476"></A>     *  Funkce main pro spousteni appletu z příkazové řádky.
+<A NAME="477"></A>     *
+<A NAME="478"></A>     *@param  argv  The command line arguments
+<A NAME="479"></A>     */</FONT>
+<A NAME="480"></A>    <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> main(String[] argv) {
+<A NAME="481"></A>        JFrame frame = <FONT ID="New">new</FONT> JFrame(<FONT ID="StringLiteral">"Teorie informace"</FONT>);
+<A NAME="482"></A>        frame.setContentPane(<FONT ID="New">new</FONT> <A HREF="TeorieInformace.java.html">TeorieInformace</A>());
+<A NAME="483"></A>        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+<A NAME="484"></A>        frame.pack();
+<A NAME="485"></A>        frame.setVisible(<FONT ID="True">true</FONT>);
+<A NAME="486"></A>    }
+<A NAME="487"></A>}
+<A NAME="488"></A>
+<A NAME="489"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">TeorieInformace.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>

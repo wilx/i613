@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.2">
+<TITLE>PriorityQueue (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">PriorityQueue.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="Import">import</FONT> java.util.*;
+<A NAME="2"></A><FONT ID="Import">import</FONT> java.io.Serializable;
+<A NAME="3"></A>
+<A NAME="4"></A><FONT ID="FormalComment">/**
+<A NAME="5"></A> *  Třída prioritní fronty použitá při konstrukci stromu Huffmanova kódu.
+<A NAME="6"></A> *
+<A NAME="7"></A> *@author     Václav Haisman
+<A NAME="8"></A> *@created    25. leden 2003
+<A NAME="9"></A> */</FONT>
+<A NAME="10"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> PriorityQueue <FONT ID="Implements">implements</FONT> Serializable {
+<A NAME="11"></A>    <FONT ID="FormalComment">/**
+<A NAME="12"></A>     *  Délka fronty.
+<A NAME="13"></A>     */</FONT>
+<A NAME="14"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Int">int</FONT> size;
+<A NAME="15"></A>    <FONT ID="FormalComment">/**
+<A NAME="16"></A>     *  Úložistě obsahu fronty.
+<A NAME="17"></A>     */</FONT>
+<A NAME="18"></A>    <FONT ID="Protected">protected</FONT> Vector buf;
+<A NAME="19"></A>    <FONT ID="FormalComment">/**
+<A NAME="20"></A>     *  Komparátor objektů fronty.
+<A NAME="21"></A>     */</FONT>
+<A NAME="22"></A>    <FONT ID="Protected">protected</FONT> Comparator cmp;
+<A NAME="23"></A>    <FONT ID="FormalComment">/**
+<A NAME="24"></A>     *  Implicitní komparátor.
+<A NAME="25"></A>     */</FONT>
+<A NAME="26"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Final">final</FONT> <FONT ID="Static">static</FONT> Comparator defaultCmp;
+<A NAME="27"></A>    <FONT ID="Static">static</FONT> {
+<A NAME="28"></A>        defaultCmp =
+<A NAME="29"></A>            <FONT ID="New">new</FONT> Comparator() {
+<A NAME="30"></A>                <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> compare(Object o1, Object o2) {
+<A NAME="31"></A>                    <FONT ID="Return">return</FONT> ((Comparable) o1).compareTo(o2);
+<A NAME="32"></A>                }
+<A NAME="33"></A>            };
+<A NAME="34"></A>    }
+<A NAME="35"></A>
+<A NAME="36"></A>
+<A NAME="37"></A>    <FONT ID="FormalComment">/**
+<A NAME="38"></A>     *  Constructor for the PriorityQueue object
+<A NAME="39"></A>     */</FONT>
+<A NAME="40"></A>    <FONT ID="Public">public</FONT> PriorityQueue() {
+<A NAME="41"></A>        cmp = defaultCmp;
+<A NAME="42"></A>        buf = <FONT ID="New">new</FONT> Vector();
+<A NAME="43"></A>        size = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="44"></A>    }
+<A NAME="45"></A>
+<A NAME="46"></A>
+<A NAME="47"></A>    <FONT ID="FormalComment">/**
+<A NAME="48"></A>     *  Constructor for the PriorityQueue object
+<A NAME="49"></A>     *
+<A NAME="50"></A>     *@param  arr  Pole objektů ze kterých bude vytvořena fronta.
+<A NAME="51"></A>     */</FONT>
+<A NAME="52"></A>    <FONT ID="Public">public</FONT> PriorityQueue(Object[] arr) {
+<A NAME="53"></A>        cmp = defaultCmp;
+<A NAME="54"></A>        buf = <FONT ID="New">new</FONT> Vector(arr.length);
+<A NAME="55"></A>        size = arr.length;
+<A NAME="56"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; arr.length; ++i) {
+<A NAME="57"></A>            buf.set(i, arr[i]);
+<A NAME="58"></A>        }
+<A NAME="59"></A>        heapify(<FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="60"></A>    }
+<A NAME="61"></A>
+<A NAME="62"></A>
+<A NAME="63"></A>    <FONT ID="FormalComment">/**
+<A NAME="64"></A>     *  Constructor for the PriorityQueue object
+<A NAME="65"></A>     *
+<A NAME="66"></A>     *@param  c  Uživatelský komparátor.
+<A NAME="67"></A>     */</FONT>
+<A NAME="68"></A>    <FONT ID="Public">public</FONT> PriorityQueue(Comparator c) {
+<A NAME="69"></A>        cmp = c;
+<A NAME="70"></A>        buf = <FONT ID="New">new</FONT> Vector();
+<A NAME="71"></A>        size = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="72"></A>    }
+<A NAME="73"></A>
+<A NAME="74"></A>
+<A NAME="75"></A>    <FONT ID="FormalComment">/**
+<A NAME="76"></A>     *  Constructor for the PriorityQueue object
+<A NAME="77"></A>     *
+<A NAME="78"></A>     *@param  arr  Pole objektů ze kterých bude vytvořena fronta.
+<A NAME="79"></A>     *@param  c    Uživatelský komparátor.
+<A NAME="80"></A>     */</FONT>
+<A NAME="81"></A>    <FONT ID="Public">public</FONT> PriorityQueue(Object[] arr, Comparator c) {
+<A NAME="82"></A>        cmp = c;
+<A NAME="83"></A>        buf = <FONT ID="New">new</FONT> Vector(arr.length);
+<A NAME="84"></A>        size = arr.length;
+<A NAME="85"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; arr.length; ++i) {
+<A NAME="86"></A>            buf.set(i, arr[i]);
+<A NAME="87"></A>        }
+<A NAME="88"></A>        heapify(<FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="89"></A>    }
+<A NAME="90"></A>
+<A NAME="91"></A>
+<A NAME="92"></A>    <FONT ID="FormalComment">/**
+<A NAME="93"></A>     *  Constructor for the PriorityQueue object
+<A NAME="94"></A>     *
+<A NAME="95"></A>     *@param  col  Kolekce ze které bude vytvořena fronta.
+<A NAME="96"></A>     */</FONT>
+<A NAME="97"></A>    <FONT ID="Public">public</FONT> PriorityQueue(Collection col) {
+<A NAME="98"></A>        cmp = defaultCmp;
+<A NAME="99"></A>        buf = <FONT ID="New">new</FONT> Vector(col);
+<A NAME="100"></A>        size = col.size();
+<A NAME="101"></A>        heapify(<FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="102"></A>    }
+<A NAME="103"></A>
+<A NAME="104"></A>
+<A NAME="105"></A>    <FONT ID="FormalComment">/**
+<A NAME="106"></A>     *  Constructor for the PriorityQueue object
+<A NAME="107"></A>     *
+<A NAME="108"></A>     *@param  col  Kolekce ze které bude vytvořena fronta.
+<A NAME="109"></A>     *@param  c    Uživatelský komparátor.
+<A NAME="110"></A>     */</FONT>
+<A NAME="111"></A>    <FONT ID="Public">public</FONT> PriorityQueue(Collection col, Comparator c) {
+<A NAME="112"></A>        cmp = c;
+<A NAME="113"></A>        buf = <FONT ID="New">new</FONT> Vector(col);
+<A NAME="114"></A>        size = col.size();
+<A NAME="115"></A>        heapify(<FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="116"></A>    }
+<A NAME="117"></A>
+<A NAME="118"></A>
+<A NAME="119"></A>    <FONT ID="FormalComment">/**
+<A NAME="120"></A>     *  Vrací levého následníka v binární haldě.
+<A NAME="121"></A>     *
+<A NAME="122"></A>     *@param  i  Rodič.
+<A NAME="123"></A>     *@return    Levý následník.
+<A NAME="124"></A>     */</FONT>
+<A NAME="125"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Int">int</FONT> left(<FONT ID="Int">int</FONT> i) {
+<A NAME="126"></A>        <FONT ID="Return">return</FONT> (<FONT ID="IntegerLiteral">2</FONT> * i);
+<A NAME="127"></A>    }
+<A NAME="128"></A>
+<A NAME="129"></A>
+<A NAME="130"></A>    <FONT ID="FormalComment">/**
+<A NAME="131"></A>     *  Vrací pravého následníka v binární haldě.
+<A NAME="132"></A>     *
+<A NAME="133"></A>     *@param  i  Rodič.
+<A NAME="134"></A>     *@return    Pravý následník.
+<A NAME="135"></A>     */</FONT>
+<A NAME="136"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Int">int</FONT> right(<FONT ID="Int">int</FONT> i) {
+<A NAME="137"></A>        <FONT ID="Return">return</FONT> (<FONT ID="IntegerLiteral">2</FONT> * i + <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="138"></A>    }
+<A NAME="139"></A>
+<A NAME="140"></A>
+<A NAME="141"></A>    <FONT ID="FormalComment">/**
+<A NAME="142"></A>     *  Vrací rodiče prvku binární haldy.
+<A NAME="143"></A>     *
+<A NAME="144"></A>     *@param  i  Prvek.
+<A NAME="145"></A>     *@return    Rodič prvku.
+<A NAME="146"></A>     */</FONT>
+<A NAME="147"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Int">int</FONT> parent(<FONT ID="Int">int</FONT> i) {
+<A NAME="148"></A>        <FONT ID="Return">return</FONT> (i / <FONT ID="IntegerLiteral">2</FONT>);
+<A NAME="149"></A>    }
+<A NAME="150"></A>
+<A NAME="151"></A>
+<A NAME="152"></A>    <FONT ID="FormalComment">/**
+<A NAME="153"></A>     *  Prohodí dva prvky.
+<A NAME="154"></A>     *
+<A NAME="155"></A>     *@param  i  Prvek haldy.
+<A NAME="156"></A>     *@param  j  Prvek haldy.
+<A NAME="157"></A>     */</FONT>
+<A NAME="158"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> swap(<FONT ID="Int">int</FONT> i, <FONT ID="Int">int</FONT> j) {
+<A NAME="159"></A>        Object tmp = buf.get(i);
+<A NAME="160"></A>
+<A NAME="161"></A>        buf.set(i, buf.get(j));
+<A NAME="162"></A>        buf.set(j, tmp);
+<A NAME="163"></A>    }
+<A NAME="164"></A>
+<A NAME="165"></A>
+<A NAME="166"></A>    <FONT ID="FormalComment">/**
+<A NAME="167"></A>     *  Kostrukce binární haldy směrem ke kořeni.
+<A NAME="168"></A>     *
+<A NAME="169"></A>     *@param  i  Prvek.
+<A NAME="170"></A>     */</FONT>
+<A NAME="171"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> up(<FONT ID="Int">int</FONT> i) {
+<A NAME="172"></A>        <FONT ID="Int">int</FONT> p = parent(i);
+<A NAME="173"></A>
+<A NAME="174"></A>        <FONT ID="If">if</FONT> (p &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="175"></A>            <FONT ID="If">if</FONT> (cmp.compare(buf.get(i - <FONT ID="IntegerLiteral">1</FONT>), buf.get(p - <FONT ID="IntegerLiteral">1</FONT>)) &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="176"></A>                swap(i - <FONT ID="IntegerLiteral">1</FONT>, p - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="177"></A>                up(p);
+<A NAME="178"></A>            }
+<A NAME="179"></A>        }
+<A NAME="180"></A>    }
+<A NAME="181"></A>
+<A NAME="182"></A>
+<A NAME="183"></A>    <FONT ID="FormalComment">/**
+<A NAME="184"></A>     *  Konstrukce binární haldy.
+<A NAME="185"></A>     *
+<A NAME="186"></A>     *@param  i  Prvek.
+<A NAME="187"></A>     */</FONT>
+<A NAME="188"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Void">void</FONT> heapify(<FONT ID="Int">int</FONT> i) {
+<A NAME="189"></A>        <FONT ID="Int">int</FONT> l = left(i);
+<A NAME="190"></A>        <FONT ID="Int">int</FONT> r = right(i);
+<A NAME="191"></A>        <FONT ID="Int">int</FONT> largest;
+<A NAME="192"></A>
+<A NAME="193"></A>        <FONT ID="If">if</FONT> (l &lt;= size &amp;&amp; cmp.compare(buf.get(l - <FONT ID="IntegerLiteral">1</FONT>), buf.get(i - <FONT ID="IntegerLiteral">1</FONT>)) &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="194"></A>            largest = l;
+<A NAME="195"></A>        }
+<A NAME="196"></A>        <FONT ID="Else">else</FONT> {
+<A NAME="197"></A>            largest = i;
+<A NAME="198"></A>        }
+<A NAME="199"></A>        <FONT ID="If">if</FONT> (r &lt;= size &amp;&amp; cmp.compare(buf.get(r - <FONT ID="IntegerLiteral">1</FONT>), buf.get(i - <FONT ID="IntegerLiteral">1</FONT>)) &gt; <FONT ID="IntegerLiteral">0</FONT>
+<A NAME="200"></A>                 &amp;&amp; cmp.compare(buf.get(r - <FONT ID="IntegerLiteral">1</FONT>), buf.get(largest - <FONT ID="IntegerLiteral">1</FONT>)) &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="201"></A>            largest = r;
+<A NAME="202"></A>        }
+<A NAME="203"></A>        <FONT ID="If">if</FONT> (largest != i) {
+<A NAME="204"></A>            swap(largest - <FONT ID="IntegerLiteral">1</FONT>, i - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="205"></A>            heapify(largest);
+<A NAME="206"></A>        }
+<A NAME="207"></A>    }
+<A NAME="208"></A>
+<A NAME="209"></A>
+<A NAME="210"></A>    <FONT ID="FormalComment">/**
+<A NAME="211"></A>     *  Vloží prvek do fronty.
+<A NAME="212"></A>     *
+<A NAME="213"></A>     *@param  o  Prvek.
+<A NAME="214"></A>     */</FONT>
+<A NAME="215"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> put(Object o) {
+<A NAME="216"></A>        <FONT ID="If">if</FONT> (buf.size() &gt; size) {
+<A NAME="217"></A>            buf.set(size, o);
+<A NAME="218"></A>        }
+<A NAME="219"></A>        <FONT ID="Else">else</FONT> {
+<A NAME="220"></A>            buf.add(o);
+<A NAME="221"></A>        }
+<A NAME="222"></A>        ++size;
+<A NAME="223"></A>        up(size);
+<A NAME="224"></A>    }
+<A NAME="225"></A>
+<A NAME="226"></A>
+<A NAME="227"></A>    <FONT ID="FormalComment">/**
+<A NAME="228"></A>     *  Vybere první prvek z fronty.
+<A NAME="229"></A>     *
+<A NAME="230"></A>     *@return    Prvek.
+<A NAME="231"></A>     */</FONT>
+<A NAME="232"></A>    <FONT ID="Public">public</FONT> Object get() {
+<A NAME="233"></A>        Object ret;
+<A NAME="234"></A>
+<A NAME="235"></A>        <FONT ID="If">if</FONT> (size &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="236"></A>            ret = buf.get(<FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="237"></A>        }
+<A NAME="238"></A>        <FONT ID="Else">else</FONT> {
+<A NAME="239"></A>            <FONT ID="Return">return</FONT> <FONT ID="Null">null</FONT>;
+<A NAME="240"></A>        }
+<A NAME="241"></A>
+<A NAME="242"></A>        buf.set(<FONT ID="IntegerLiteral">0</FONT>, buf.get(size - <FONT ID="IntegerLiteral">1</FONT>));
+<A NAME="243"></A>        --size;
+<A NAME="244"></A>        <FONT ID="If">if</FONT> (size &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="245"></A>            heapify(<FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="246"></A>        }
+<A NAME="247"></A>        buf.remove(buf.size() - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="248"></A>        <FONT ID="Return">return</FONT> ret;
+<A NAME="249"></A>    }
+<A NAME="250"></A>
+<A NAME="251"></A>
+<A NAME="252"></A>    <FONT ID="FormalComment">/**
+<A NAME="253"></A>     *  Predikát prázdnosti fronty.
+<A NAME="254"></A>     *
+<A NAME="255"></A>     *@return    true/false
+<A NAME="256"></A>     */</FONT>
+<A NAME="257"></A>    <FONT ID="Public">public</FONT> <FONT ID="Boolean">boolean</FONT> isEmpty() {
+<A NAME="258"></A>        <FONT ID="Return">return</FONT> size &gt; <FONT ID="IntegerLiteral">0</FONT> ? <FONT ID="False">false</FONT> : <FONT ID="True">true</FONT>;
+<A NAME="259"></A>    }
+<A NAME="260"></A>
+<A NAME="261"></A>
+<A NAME="262"></A>    <FONT ID="FormalComment">/**
+<A NAME="263"></A>     *  Vrací počet prvků ve frontě.
+<A NAME="264"></A>     *
+<A NAME="265"></A>     *@return    Počet prvků.
+<A NAME="266"></A>     */</FONT>
+<A NAME="267"></A>    <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> size() {
+<A NAME="268"></A>        <FONT ID="Return">return</FONT> size;
+<A NAME="269"></A>    }
+<A NAME="270"></A>}
+<A NAME="271"></A>
+<A NAME="272"></A></pre><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">PriorityQueue.java</font>
+</td>
+<td align="right" colspan="2" width="33%"></td>
+</tr>
+</TABLE>
+
+</BODY>
+</HTML>
