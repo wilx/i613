@@ -13,7 +13,7 @@ abstract class CollectionEntropyAnalyzer extends EntropyAnalyzer {
      *@param  o  Description of the Parameter
      *@return    Description of the Return Value
      */
-    public abstract double probability(Object o);
+    public abstract double probability(Character o);
 
 
     /**

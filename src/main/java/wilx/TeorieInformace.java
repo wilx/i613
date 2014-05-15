@@ -5,9 +5,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
@@ -32,6 +33,8 @@ import javax.swing.text.Document;
  *@created    25. leden 2003
  */
 public class TeorieInformace extends JApplet {
+    private static final long serialVersionUID = -6839232509270632651L;
+
     protected JPanel contentPane;
     protected JPanel panel;
     protected JLabel lblAvgEnt, lblMsgEnt, lblMsgLen, lblMsgHuffLen,
@@ -54,6 +57,7 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  Description of the Parameter
          */
+        @Override
         public void changedUpdate(final DocumentEvent e) {
             handler(e);
         }
@@ -64,6 +68,7 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  Description of the Parameter
          */
+        @Override
         public void insertUpdate(final DocumentEvent e) {
             handler(e);
         }
@@ -74,6 +79,7 @@ public class TeorieInformace extends JApplet {
          *
          *@param  e  Description of the Parameter
          */
+        @Override
         public void removeUpdate(final DocumentEvent e) {
             handler(e);
         }
@@ -105,7 +111,7 @@ public class TeorieInformace extends JApplet {
             lblAvgEnt.setText(df.format(ea.averageEntropy() == -0.0
                      ? 0.0 : ea.averageEntropy()) + " bitů");
             final char[] m = text.toUpperCase().toCharArray();
-            final Object[] msg = new Object[m.length];
+            final Character[] msg = new Character[m.length];
             for (i = 0; i < m.length; ++i) {
                 msg[i] = new Character(m[i]);
             }
@@ -118,10 +124,10 @@ public class TeorieInformace extends JApplet {
             // delka zpravy
             lblMsgLen.setText((doc.getLength() * 8) + " bitů");
             int len = 0;
-            final HuffmanCodeTree huff = new HuffmanCodeTree(ea.getFrequenciesMap());
-            final Map huffkod = huff.getHuffmanCode();
+            final HuffmanCodeTree<Character> huff = new HuffmanCodeTree<Character>(ea.getFrequenciesMap());
+            final Map<Character, String> huffkod = huff.getHuffmanCode();
             for (i = 0; i < msg.length; ++i) {
-                final String s = (String) huffkod.get(msg[i]);
+                final String s = huffkod.get(msg[i]);
                 len += s.length();
             }
             // delka zpravy v Huffmanove kodu
@@ -132,7 +138,7 @@ public class TeorieInformace extends JApplet {
             lblMsgHuffRed.setText(df.format(len - msgEnt) + " bitů");
             // prumerna delka slova ASCII kodu zpravy
             double avgwordlen = 0;
-            final Object[] klice = huffkod.keySet().toArray();
+            final Character[] klice = huffkod.keySet().toArray(new Character[huffkod.keySet().size()]);
             for (i = 0; i < klice.length; ++i) {
                 avgwordlen += 8 * ea.probability(klice[i]);
             }
@@ -140,7 +146,7 @@ public class TeorieInformace extends JApplet {
             // prumerna delka slova Huffmanova kodu zpravy
             double avgwordhufflen = 0;
             for (i = 0; i < klice.length; ++i) {
-                avgwordhufflen += ((String)huffkod.get(klice[i])).length()
+                avgwordhufflen += huffkod.get(klice[i]).length()
                                   * ea.probability(klice[i]);
             }
             lblCWordHuffLen.setText(df.format(avgwordhufflen));
@@ -160,8 +166,10 @@ public class TeorieInformace extends JApplet {
      *@created    25. leden 2003
      */
     class MyTableModel extends AbstractTableModel {
-        Vector sloupce = new Vector();
-        Vector data = new Vector();
+        private static final long serialVersionUID = 6050182162198136481L;
+
+        List<String> columns = new ArrayList<>();
+        List<List<String>> data = new ArrayList<>();
 
 
         /**
@@ -169,7 +177,7 @@ public class TeorieInformace extends JApplet {
          */
         public MyTableModel() {
             super();
-            sloupce.add("Default");
+            columns.add("Default");
         }
 
 
@@ -177,55 +185,55 @@ public class TeorieInformace extends JApplet {
          *  Metoda update provádí prepočítání a zobrazení charakteristických hodnot
          *  zdrojových jednotek z předaného bufferu.
          *
-         *@param  znaky  Buffer analyzované zprávy.
+         *@param  characters  Buffer analyzované zprávy.
          */
-        public void update(final char[] znaky) {
+        public void update(final char[] characters) {
             int i;
 
-            data = new Vector();
-            sloupce = new Vector();
-            final Map freq = ea.getFrequenciesMap();
-            final Object[] klice = freq.keySet().toArray();
+            data = new ArrayList<>();
+            columns = new ArrayList<>();
+            final Map<Character, Integer> freq = ea.getFrequenciesMap();
+            final Character[] klice = freq.keySet().toArray(new Character[freq.keySet().size()]);
             Arrays.sort(klice);
             // zahlavi
-            sloupce.add("Názvy");
+            columns.add("Názvy");
             for (i = 0; i < klice.length; ++i) {
-                sloupce.add(klice[i].toString());
+                columns.add(klice[i].toString());
             }
             // radek pravdepodobnosti
-            Vector radek = new Vector();
-            radek.add("Pravděpodobnost");
+            List<String> row = new ArrayList<>();
+            row.add("Pravděpodobnost");
             for (i = 0; i < klice.length; ++i) {
                 final double p = ea.probability(klice[i]);
-                radek.add(df.format(p));
+                row.add(df.format(p));
             }
-            data.add(radek);
+            data.add(row);
             // radek entropie
-            radek = new Vector();
-            radek.add("Entropie");
+            row = new ArrayList<>();
+            row.add("Entropie");
             for (i = 0; i < klice.length; ++i) {
                 double e = ea.entropy(klice[i]);
                 e = e == -0.0 ? 0.0 : e;
-                radek.add(df.format(e));
+                row.add(df.format(e));
             }
-            data.add(radek);
+            data.add(row);
             // radek delky Huffmanova kodu pro dany znak
-            radek = new Vector();
-            radek.add("Délka Huffmanova kódu");
-            final HuffmanCodeTree huff = new HuffmanCodeTree(ea.getFrequenciesMap());
-            final Map huffkod = huff.getHuffmanCode();
+            row = new ArrayList<>();
+            row.add("Délka Huffmanova kódu");
+            final HuffmanCodeTree<Character> huff = new HuffmanCodeTree<Character>(ea.getFrequenciesMap());
+            final Map<Character, String> huffkod = huff.getHuffmanCode();
             for (i = 0; i < klice.length; ++i) {
-                final String s = (String) huffkod.get(klice[i]);
-                radek.add(Integer.toString(s.length()));
+                final String s = huffkod.get(klice[i]);
+                row.add(Integer.toString(s.length()));
             }
-            data.add(radek);
+            data.add(row);
             // radek vlastniho Huffmanova kodu pro dany znak
-            radek = new Vector();
-            radek.add("Huffmanův kód");
+            row = new ArrayList<>();
+            row.add("Huffmanův kód");
             for (i = 0; i < klice.length; ++i) {
-                radek.add(huffkod.get(klice[i]));
+                row.add(huffkod.get(klice[i]));
             }
-            data.add(radek);
+            data.add(row);
 
             fireTableStructureChanged();
         }
@@ -236,8 +244,9 @@ public class TeorieInformace extends JApplet {
          *
          *@return    The columnCount value
          */
+        @Override
         public int getColumnCount() {
-            return sloupce.size();
+            return columns.size();
         }
 
 
@@ -246,6 +255,7 @@ public class TeorieInformace extends JApplet {
          *
          *@return    The rowCount value
          */
+        @Override
         public int getRowCount() {
             return data.size();
         }
@@ -259,7 +269,7 @@ public class TeorieInformace extends JApplet {
          */
         @Override
         public String getColumnName(final int col) {
-            return (String) sloupce.elementAt(col);
+            return columns.get(col);
         }
 
 
@@ -270,11 +280,11 @@ public class TeorieInformace extends JApplet {
          *@param  col  Description of the Parameter
          *@return      The valueAt value
          */
+        @Override
         public Object getValueAt(final int row, final int col) {
-            final Vector r = (Vector) data.elementAt(row);
-            final Object o = r.elementAt(col);
+            final List<String> r = data.get(row);
+            final String o = r.get(col);
             return o;
-            //return ((Vector)data.elementAt(row)).elementAt(col);
         }
 
 

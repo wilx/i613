@@ -18,7 +18,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
     /**
      *  Mapa frekvencí výskytů zdrojových jednotek.
      */
-    protected Map freq;
+    protected Map<Character, Integer> freq;
 
 
     /**
@@ -28,7 +28,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      */
     public CharArrayEntropyAnalyzer(final char[] b) {
         buffer = b;
-        freq = new HashMap();
+        freq = new HashMap<>();
         computeFrequencies();
         compute();
     }
@@ -40,7 +40,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@param  b  Pole zprávy.
      *@param  f  Uživatelská mapa frekvence výskytů zdrojových jednotek.
      */
-    public CharArrayEntropyAnalyzer(final char[] b, final Map f) {
+    public CharArrayEntropyAnalyzer(final char[] b, final Map<Character, Integer> f) {
         buffer = b;
         freq = f;
         compute();
@@ -67,7 +67,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@return    Entropie zdrojové jednotky.
      */
     @Override
-    public double entropy(final Object o) {
+    public double entropy(final Character o) {
         return -log2(probability(o));
     }
 
@@ -79,7 +79,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@return    Entropie zprávy.
      */
     @Override
-    public double messageEntropy(final Object[] m) {
+    public double messageEntropy(final Character[] m) {
         double ent = 0;
         double prob;
         for (int i = 0; i < m.length; ++i) {
@@ -95,11 +95,10 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      */
     @Override
     public void compute() {
-        final Object o;
         avgent = 0;
-        final Iterator it = freq.keySet().iterator();
+        final Iterator<Character> it = freq.keySet().iterator();
         while (it.hasNext()) {
-            final Character ch = (Character) it.next();
+            final Character ch = it.next();
             final double prob = probability(ch);
             avgent += prob * log2(prob);
         }
@@ -114,7 +113,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@return    Pravděpodobnost.
      */
     @Override
-    public double probability(final Object x) {
+    public double probability(final Character x) {
         Object o;
         if ((o = freq.get(x)) == null) {
             return 0;
@@ -122,17 +121,6 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
         else {
             return (double) ((Integer) o).intValue() / buffer.length;
         }
-    }
-
-
-    /**
-     *  Vrací pravděpodobnost zdrojové jednotky.
-     *
-     *@param  ch  Zdrojová jednotka.
-     *@return     Pravděpodobnost.
-     */
-    public double probability(final char ch) {
-        return probability(new Character(ch));
     }
 
 
@@ -151,7 +139,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *
      *@return    Mapa frekvencí zdrojových jednotek.
      */
-    public Map getFrequenciesMap() {
+    public Map<Character, Integer> getFrequenciesMap() {
         return freq;
     }
 

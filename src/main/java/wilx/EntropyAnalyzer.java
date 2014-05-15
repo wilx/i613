@@ -19,7 +19,7 @@ public abstract class EntropyAnalyzer {
      *@param  o  Zdrojová jednotka.
      *@return    Entropie.
      */
-    public abstract double entropy(Object o);
+    public abstract double entropy(Character o);
 
 
     /**
@@ -28,7 +28,7 @@ public abstract class EntropyAnalyzer {
      *@param  o  Zpráva.
      *@return    Entropie zprávy.
      */
-    public abstract double messageEntropy(Object[] o);
+    public abstract double messageEntropy(Character[] o);
 
 
     /**

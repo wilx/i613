@@ -1,9 +1,10 @@
 package wilx;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Vector;
 
 /**
  *  Třída prioritní fronty použitá při konstrukci stromu Huffmanova kódu.
@@ -11,7 +12,9 @@ import java.util.Vector;
  *@author     Václav Haisman
  *@created    25. leden 2003
  */
-public class PriorityQueue implements Serializable {
+public class PriorityQueue<ItemType> implements Serializable {
+    private static final long serialVersionUID = 4003912131969360871L;
+
     /**
      *  Délka fronty.
      */
@@ -19,20 +22,20 @@ public class PriorityQueue implements Serializable {
     /**
      *  Úložistě obsahu fronty.
      */
-    protected Vector buf;
+    protected ArrayList<ItemType> buf;
     /**
      *  Komparátor objektů fronty.
      */
-    protected Comparator cmp;
+    protected Comparator<ItemType> cmp;
     /**
      *  Implicitní komparátor.
      */
-    protected final static Comparator defaultCmp;
-    static {
-        defaultCmp =
-            new Comparator() {
-                public int compare(final Object o1, final Object o2) {
-                    return ((Comparable) o1).compareTo(o2);
+    static <ItemType> Comparator<ItemType> getDefaultCmp() {
+        return new Comparator<ItemType>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public int compare(final ItemType o1, final ItemType o2) {
+                    return ((Comparable<ItemType>) o1).compareTo(o2);
                 }
             };
     }
@@ -42,8 +45,8 @@ public class PriorityQueue implements Serializable {
      *  Constructor for the PriorityQueue object
      */
     public PriorityQueue() {
-        cmp = defaultCmp;
-        buf = new Vector();
+        cmp = getDefaultCmp();
+        buf = new ArrayList<>();
         size = 0;
     }
 
@@ -53,13 +56,11 @@ public class PriorityQueue implements Serializable {
      *
      *@param  arr  Pole objektů ze kterých bude vytvořena fronta.
      */
-    public PriorityQueue(final Object[] arr) {
-        cmp = defaultCmp;
-        buf = new Vector(arr.length);
+    public PriorityQueue(final ItemType[] arr) {
+        cmp = getDefaultCmp();
+        buf = new ArrayList<>(arr.length);
         size = arr.length;
-        for (int i = 0; i < arr.length; ++i) {
-            buf.set(i, arr[i]);
-        }
+        buf.addAll(Arrays.<ItemType>asList(arr));
         heapify(1);
     }
 
@@ -69,9 +70,9 @@ public class PriorityQueue implements Serializable {
      *
      *@param  c  Uživatelský komparátor.
      */
-    public PriorityQueue(final Comparator c) {
+    public PriorityQueue(final Comparator<ItemType> c) {
         cmp = c;
-        buf = new Vector();
+        buf = new ArrayList<>();
         size = 0;
     }
 
@@ -82,13 +83,11 @@ public class PriorityQueue implements Serializable {
      *@param  arr  Pole objektů ze kterých bude vytvořena fronta.
      *@param  c    Uživatelský komparátor.
      */
-    public PriorityQueue(final Object[] arr, final Comparator c) {
+    public PriorityQueue(final ItemType[] arr, final Comparator<ItemType> c) {
         cmp = c;
-        buf = new Vector(arr.length);
+        buf = new ArrayList<>(arr.length);
         size = arr.length;
-        for (int i = 0; i < arr.length; ++i) {
-            buf.set(i, arr[i]);
-        }
+        buf.addAll(Arrays.<ItemType>asList(arr));
         heapify(1);
     }
 
@@ -98,9 +97,9 @@ public class PriorityQueue implements Serializable {
      *
      *@param  col  Kolekce ze které bude vytvořena fronta.
      */
-    public PriorityQueue(final Collection col) {
-        cmp = defaultCmp;
-        buf = new Vector(col);
+    public PriorityQueue(final Collection<ItemType> col) {
+        cmp = getDefaultCmp();
+        buf = new ArrayList<>(col);
         size = col.size();
         heapify(1);
     }
@@ -112,9 +111,9 @@ public class PriorityQueue implements Serializable {
      *@param  col  Kolekce ze které bude vytvořena fronta.
      *@param  c    Uživatelský komparátor.
      */
-    public PriorityQueue(final Collection col, final Comparator c) {
+    public PriorityQueue(final Collection<ItemType> col, final Comparator<ItemType> c) {
         cmp = c;
-        buf = new Vector(col);
+        buf = new ArrayList<>(col);
         size = col.size();
         heapify(1);
     }
@@ -137,7 +136,7 @@ public class PriorityQueue implements Serializable {
      *@param  i  Rodič.
      *@return    Pravý následník.
      */
-    protected int right(final int i) {
+    protected static int right(final int i) {
         return (2 * i + 1);
     }
 
@@ -148,7 +147,7 @@ public class PriorityQueue implements Serializable {
      *@param  i  Prvek.
      *@return    Rodič prvku.
      */
-    protected int parent(final int i) {
+    protected static int parent(final int i) {
         return (i / 2);
     }
 
@@ -160,8 +159,7 @@ public class PriorityQueue implements Serializable {
      *@param  j  Prvek haldy.
      */
     protected void swap(final int i, final int j) {
-        final Object tmp = buf.get(i);
-
+        final ItemType tmp = buf.get(i);
         buf.set(i, buf.get(j));
         buf.set(j, tmp);
     }
@@ -216,7 +214,7 @@ public class PriorityQueue implements Serializable {
      *
      *@param  o  Prvek.
      */
-    public void put(final Object o) {
+    public void put(final ItemType o) {
         if (buf.size() > size) {
             buf.set(size, o);
         }
@@ -233,8 +231,8 @@ public class PriorityQueue implements Serializable {
      *
      *@return    Prvek.
      */
-    public Object get() {
-        Object ret;
+    public ItemType get() {
+        ItemType ret;
 
         if (size > 0) {
             ret = buf.get(0);

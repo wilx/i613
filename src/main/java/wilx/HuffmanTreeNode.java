@@ -6,7 +6,7 @@ package wilx;
  *@author     Václav Haisman
  *@created    25. leden 2003
  */
-public class HuffmanTreeNode {
+public class HuffmanTreeNode<ItemType extends Comparable<ItemType>> {
 
 
     /**
@@ -16,15 +16,15 @@ public class HuffmanTreeNode {
     /**
      *  Obsah uzlu.
      */
-    protected Object obj;
+    protected ItemType obj;
     /**
      *  Levý podstrom.
      */
-    protected HuffmanTreeNode left;
+    protected HuffmanTreeNode<ItemType> left;
     /**
      *  Pravý podstrom.
      */
-    protected HuffmanTreeNode right;
+    protected HuffmanTreeNode<ItemType> right;
 
 
     /**
@@ -35,7 +35,8 @@ public class HuffmanTreeNode {
      *@param  l  Levý podstrom.
      *@param  r  Pravý podstrom.
      */
-    public HuffmanTreeNode(final double w, final Object o, final HuffmanTreeNode l, final HuffmanTreeNode r) {
+    public HuffmanTreeNode(final double w, final ItemType o,
+        final HuffmanTreeNode<ItemType> l, final HuffmanTreeNode<ItemType> r) {
         weight = w;
         left = l;
         right = r;
@@ -48,35 +49,11 @@ public class HuffmanTreeNode {
      *
      *@param  w  Váha uzlu.
      *@param  o  Obsah uzlu.
-     *@param  l  Levý podstrom.
-     *@param  r  Pravý podstrom.
      */
-    public HuffmanTreeNode(final Double w, final Object o, final HuffmanTreeNode l, final HuffmanTreeNode r) {
-        this(w.doubleValue(), o, l, r);
-    }
-
-
-    /**
-     *  Constructor for the HuffmanTreeNode object
-     *
-     *@param  w  Váha uzlu.
-     *@param  o  Obsah uzlu.
-     */
-    public HuffmanTreeNode(final double w, final Object o) {
+    public HuffmanTreeNode(final double w, final ItemType o) {
         weight = w;
         left = right = null;
         obj = o;
-    }
-
-
-    /**
-     *  Constructor for the HuffmanTreeNode object
-     *
-     *@param  w  Váha uzlu.
-     *@param  o  Obsah uzlu.
-     */
-    public HuffmanTreeNode(final Double w, final Object o) {
-        this(w.doubleValue(), o);
     }
 
 
@@ -95,7 +72,7 @@ public class HuffmanTreeNode {
      *
      *@return    Levý podstrom.
      */
-    public HuffmanTreeNode getLeft() {
+    public HuffmanTreeNode<ItemType> getLeft() {
         return left;
     }
 
@@ -105,7 +82,7 @@ public class HuffmanTreeNode {
      *
      *@return    Pravý podstrom.
      */
-    public HuffmanTreeNode getRight() {
+    public HuffmanTreeNode<ItemType> getRight() {
         return right;
     }
 
@@ -115,7 +92,7 @@ public class HuffmanTreeNode {
      *
      *@return    Obsah uzlu.
      */
-    public Object getValue() {
+    public ItemType getValue() {
         return obj;
     }
 }

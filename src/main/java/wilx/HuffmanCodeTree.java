@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -12,11 +13,11 @@ import java.util.Set;
  *@author     Václav Haisman
  *@created    25. leden 2003
  */
-public class HuffmanCodeTree {
+public class HuffmanCodeTree<ItemType extends Comparable<ItemType>> {
     /**
      *  Kořen stromu Huffmanova kódu.
      */
-    protected HuffmanTreeNode root;
+    protected HuffmanTreeNode<ItemType> root;
 
 
     /**
@@ -24,16 +25,15 @@ public class HuffmanCodeTree {
      *
      *@param  probMap  Mapa pravděpodobností výskytu zdrojových jednotek.
      */
-    public HuffmanCodeTree(final Map probMap) {
-        final PriorityQueue q = new PriorityQueue(
-            new Comparator() {
-                public int compare(final Object o1, final Object o2) {
-                    if (((HuffmanTreeNode) o1).getWeight()
-                             < ((HuffmanTreeNode) o2).getWeight()) {
+    public HuffmanCodeTree(final Map<ItemType, Integer> probMap) {
+        final PriorityQueue<HuffmanTreeNode<ItemType>> q = new PriorityQueue<>(
+            new Comparator<HuffmanTreeNode<ItemType>>() {
+                @Override
+                public int compare(final HuffmanTreeNode<ItemType> o1, final HuffmanTreeNode<ItemType> o2) {
+                    if (o1.getWeight() < o2.getWeight()) {
                         return 1;
                     }
-                    if (((HuffmanTreeNode) o1).getWeight()
-                             == ((HuffmanTreeNode) o2).getWeight()) {
+                    if (o1.getWeight() == o2.getWeight()) {
                         return 0;
                     }
                     else {
@@ -41,16 +41,14 @@ public class HuffmanCodeTree {
                     }
                 }
             });
-        final Set entries = probMap.entrySet();
-        final Iterator i = entries.iterator();
-        final Object o;
-
+        final Set<Entry<ItemType, Integer>> entries = probMap.entrySet();
+        final Iterator<Entry<ItemType, Integer>> i = entries.iterator();
         /*
          *  inicializace prioritni frony
          */
         while (i.hasNext()) {
-            final Map.Entry e = (Map.Entry) i.next();
-            q.put(new HuffmanTreeNode(new Double(((Integer) e.getValue()).intValue()),
+            final Entry<ItemType, Integer> e = i.next();
+            q.put(new HuffmanTreeNode<ItemType>(e.getValue().intValue(),
                     e.getKey()));
         }
 
@@ -58,15 +56,15 @@ public class HuffmanCodeTree {
          *  vytvoreni stromu
          */
         while (q.size() > 1) {
-            HuffmanTreeNode l;
-            HuffmanTreeNode r;
-            HuffmanTreeNode p;
-            r = (HuffmanTreeNode) q.get();
-            l = (HuffmanTreeNode) q.get();
-            p = new HuffmanTreeNode(r.getWeight() + l.getWeight(), null, l, r);
+            HuffmanTreeNode<ItemType> l;
+            HuffmanTreeNode<ItemType> r;
+            HuffmanTreeNode<ItemType> p;
+            r = q.get();
+            l = q.get();
+            p = new HuffmanTreeNode<ItemType>(r.getWeight() + l.getWeight(), null, l, r);
             q.put(p);
         }
-        root = (HuffmanTreeNode) q.get();
+        root = q.get();
     }
 
 
@@ -77,7 +75,8 @@ public class HuffmanCodeTree {
      *@param  str   Řetězec reprezentující prošlou část mapy.
      *@param  map   Převodní mapa.
      */
-    protected void preorder(final HuffmanTreeNode node, final String str, final Map map) {
+    protected void preorder(final HuffmanTreeNode<ItemType> node,
+        final String str, final Map<ItemType, String> map) {
         if (node == null) {
             return;
         }
@@ -98,8 +97,8 @@ public class HuffmanCodeTree {
      *
      *@return    Mapa Huffmanova kódu.
      */
-    public Map getHuffmanCode() {
-        final Map map = new HashMap();
+    public Map<ItemType, String> getHuffmanCode() {
+        final Map<ItemType, String> map = new HashMap<>();
         preorder(root, "", map);
         return map;
     }
