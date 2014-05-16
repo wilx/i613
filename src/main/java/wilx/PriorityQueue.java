@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 
 /**
@@ -45,9 +46,7 @@ public class PriorityQueue<ItemType> implements Serializable {
      *  Constructor for the PriorityQueue object
      */
     public PriorityQueue() {
-        cmp = getDefaultCmp();
-        buf = new ArrayList<>();
-        size = 0;
+        this(getDefaultCmp());
     }
 
 
@@ -58,9 +57,8 @@ public class PriorityQueue<ItemType> implements Serializable {
      */
     public PriorityQueue(final ItemType[] arr) {
         cmp = getDefaultCmp();
-        buf = new ArrayList<>(arr.length);
+        buf = new ArrayList<>(Arrays.<ItemType>asList(arr));
         size = arr.length;
-        buf.addAll(Arrays.<ItemType>asList(arr));
         heapify(1);
     }
 
@@ -85,9 +83,8 @@ public class PriorityQueue<ItemType> implements Serializable {
      */
     public PriorityQueue(final ItemType[] arr, final Comparator<ItemType> c) {
         cmp = c;
-        buf = new ArrayList<>(arr.length);
+        buf = new ArrayList<>(Arrays.<ItemType>asList(arr));
         size = arr.length;
-        buf.addAll(Arrays.<ItemType>asList(arr));
         heapify(1);
     }
 
@@ -159,9 +156,7 @@ public class PriorityQueue<ItemType> implements Serializable {
      *@param  j  Prvek haldy.
      */
     protected void swap(final int i, final int j) {
-        final ItemType tmp = buf.get(i);
-        buf.set(i, buf.get(j));
-        buf.set(j, tmp);
+        Collections.swap(buf, i, j);
     }
 
 
