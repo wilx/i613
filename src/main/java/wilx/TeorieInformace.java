@@ -19,6 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -27,69 +30,75 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 /**
- *  Hlavní třída appletu Teorie informace.
+ * Hlavní třída appletu Teorie informace.
  *
- *@author     Václav Haisman
- *@created    25. leden 2003
+ * @author Václav Haisman
+ * @created 25. leden 2003
  */
 public class TeorieInformace extends JApplet {
+
     private static final long serialVersionUID = -6839232509270632651L;
 
     protected JPanel contentPane;
+
     protected JPanel panel;
-    protected JLabel lblAvgEnt, lblMsgEnt, lblMsgLen, lblMsgHuffLen,
-            lblMsgRed, lblMsgHuffRed, lblCWordLen, lblCWordHuffLen,
-            lblAvgRedASCII, lblAvgRedHuff;
+
+    protected JLabel lblAvgEnt, lblMsgEnt, lblMsgLen, lblMsgHuffLen, lblMsgRed, lblMsgHuffRed, lblCWordLen,
+            lblCWordHuffLen, lblAvgRedASCII, lblAvgRedHuff;
+
     protected CharArrayEntropyAnalyzer ea;
+
     protected MyTableModel model;
+
     private static DecimalFormat df = new DecimalFormat("###.###");
 
-
     /**
-     *  Třída implementující DocumentListener pro vstupní pole.
+     * Třída implementující DocumentListener pro vstupní pole.
      *
-     *@author     Václav Haisman
-     *@created    25. leden 2003
+     * @author Václav Haisman
+     * @created 25. leden 2003
      */
     class TextAreaListener implements DocumentListener {
+
         /**
-         *  Description of the Method
+         * Description of the Method
          *
-         *@param  e  Description of the Parameter
+         * @param e
+         *          Description of the Parameter
          */
         @Override
         public void changedUpdate(final DocumentEvent e) {
             handler(e);
         }
 
-
         /**
-         *  Description of the Method
+         * Description of the Method
          *
-         *@param  e  Description of the Parameter
+         * @param e
+         *          Description of the Parameter
          */
         @Override
         public void insertUpdate(final DocumentEvent e) {
             handler(e);
         }
 
-
         /**
-         *  Description of the Method
+         * Description of the Method
          *
-         *@param  e  Description of the Parameter
+         * @param e
+         *          Description of the Parameter
          */
         @Override
         public void removeUpdate(final DocumentEvent e) {
             handler(e);
         }
 
-
         /**
-         *  Tato metoda vezme text ze vstupního textového pole a posle ho
-         *  modelu tabulky. Také provede přepočítání charakteristických hodnot.
+         * Tato metoda vezme text ze vstupního textového pole a posle ho modelu
+         * tabulky. Také provede přepočítání charakteristických hodnot.
          *
-         *@param  e  DocumentEvent
+         * @param e
+         *          DocumentEvent
          */
         private void handler(final DocumentEvent e) {
             int i;
@@ -108,12 +117,11 @@ public class TeorieInformace extends JApplet {
             model.update(znaky);
             // update ostatnich hodnot
             // prumenrna entropie
-            lblAvgEnt.setText(df.format(ea.averageEntropy() == -0.0
-                     ? 0.0 : ea.averageEntropy()) + " bitů");
+            lblAvgEnt.setText(df.format(ea.averageEntropy() == -0.0 ? 0.0 : ea.averageEntropy()) + " bitů");
             final char[] m = text.toUpperCase().toCharArray();
-            final Character[] msg = new Character[m.length];
+            final char[] msg = new char[m.length];
             for (i = 0; i < m.length; ++i) {
-                msg[i] = new Character(m[i]);
+                msg[i] = m[i];
             }
             double msgEnt = ea.messageEntropy(msg);
             if (msgEnt == -0.0) {
@@ -124,7 +132,7 @@ public class TeorieInformace extends JApplet {
             // delka zpravy
             lblMsgLen.setText((doc.getLength() * 8) + " bitů");
             int len = 0;
-            final HuffmanCodeTree<Character> huff = new HuffmanCodeTree<Character>(ea.getFrequenciesMap());
+            final HuffmanCodeTree<Character> huff = new HuffmanCodeTree<>(ea.getFrequenciesMap());
             final Map<Character, String> huffkod = huff.getHuffmanCode();
             for (i = 0; i < msg.length; ++i) {
                 final String s = huffkod.get(msg[i]);
@@ -146,8 +154,7 @@ public class TeorieInformace extends JApplet {
             // prumerna delka slova Huffmanova kodu zpravy
             double avgwordhufflen = 0;
             for (i = 0; i < klice.length; ++i) {
-                avgwordhufflen += huffkod.get(klice[i]).length()
-                                  * ea.probability(klice[i]);
+                avgwordhufflen += huffkod.get(klice[i]).length() * ea.probability(klice[i]);
             }
             lblCWordHuffLen.setText(df.format(avgwordhufflen));
             // prumerna redundance ASCII kodu
@@ -157,35 +164,35 @@ public class TeorieInformace extends JApplet {
         }
     }
 
-
     /**
-     *  Tato trida implementuje model tabulky zobrazující charakteristiké hodnoty
-     *  jednotlivých zdrojových jednotek.
+     * Tato trida implementuje model tabulky zobrazující charakteristiké hodnoty
+     * jednotlivých zdrojových jednotek.
      *
-     *@author     wilx
-     *@created    25. leden 2003
+     * @author wilx
+     * @created 25. leden 2003
      */
     class MyTableModel extends AbstractTableModel {
+
         private static final long serialVersionUID = 6050182162198136481L;
 
         List<String> columns = new ArrayList<>();
+
         List<List<String>> data = new ArrayList<>();
 
-
         /**
-         *  Constructor for the MyTableModel object
+         * Constructor for the MyTableModel object
          */
         public MyTableModel() {
             super();
             columns.add("Default");
         }
 
-
         /**
-         *  Metoda update provádí prepočítání a zobrazení charakteristických hodnot
-         *  zdrojových jednotek z předaného bufferu.
+         * Metoda update provádí prepočítání a zobrazení charakteristických hodnot
+         * zdrojových jednotek z předaného bufferu.
          *
-         *@param  characters  Buffer analyzované zprávy.
+         * @param characters
+         *          Buffer analyzované zprávy.
          */
         public void update(final char[] characters) {
             int i;
@@ -220,7 +227,7 @@ public class TeorieInformace extends JApplet {
             // radek delky Huffmanova kodu pro dany znak
             row = new ArrayList<>();
             row.add("Délka Huffmanova kódu");
-            final HuffmanCodeTree<Character> huff = new HuffmanCodeTree<Character>(ea.getFrequenciesMap());
+            final HuffmanCodeTree<Character> huff = new HuffmanCodeTree<>(ea.getFrequenciesMap());
             final Map<Character, String> huffkod = huff.getHuffmanCode();
             for (i = 0; i < klice.length; ++i) {
                 final String s = huffkod.get(klice[i]);
@@ -238,47 +245,46 @@ public class TeorieInformace extends JApplet {
             fireTableStructureChanged();
         }
 
-
         /**
-         *  Gets the columnCount attribute of the MyTableModel object
+         * Gets the columnCount attribute of the MyTableModel object
          *
-         *@return    The columnCount value
+         * @return The columnCount value
          */
         @Override
         public int getColumnCount() {
             return columns.size();
         }
 
-
         /**
-         *  Gets the rowCount attribute of the MyTableModel object
+         * Gets the rowCount attribute of the MyTableModel object
          *
-         *@return    The rowCount value
+         * @return The rowCount value
          */
         @Override
         public int getRowCount() {
             return data.size();
         }
 
-
         /**
-         *  Gets the columnName attribute of the MyTableModel object
+         * Gets the columnName attribute of the MyTableModel object
          *
-         *@param  col  Description of the Parameter
-         *@return      The columnName value
+         * @param col
+         *          Description of the Parameter
+         * @return The columnName value
          */
         @Override
         public String getColumnName(final int col) {
             return columns.get(col);
         }
 
-
         /**
-         *  Gets the valueAt attribute of the MyTableModel object
+         * Gets the valueAt attribute of the MyTableModel object
          *
-         *@param  row  Description of the Parameter
-         *@param  col  Description of the Parameter
-         *@return      The valueAt value
+         * @param row
+         *          Description of the Parameter
+         * @param col
+         *          Description of the Parameter
+         * @return The valueAt value
          */
         @Override
         public Object getValueAt(final int row, final int col) {
@@ -287,31 +293,29 @@ public class TeorieInformace extends JApplet {
             return o;
         }
 
-
         /**
-         *  Gets the columnClass attribute of the MyTableModel object
+         * Gets the columnClass attribute of the MyTableModel object
          *
-         *@param  c  Description of the Parameter
-         *@return    The columnClass value
+         * @param c
+         *          Description of the Parameter
+         * @return The columnClass value
          */
         @Override
-        public Class<? extends Object> getColumnClass(final int c) {
+        public Class<?> getColumnClass(final int c) {
             return getValueAt(0, c).getClass();
         }
     }
 
-
     /**
-     *  Kostruktor tridy TeorieInformace
+     * Kostruktor tridy TeorieInformace
      */
     public TeorieInformace() {
         super();
         init();
     }
 
-
     /**
-     *  Incializační metoda appletu.
+     * Incializační metoda appletu.
      */
     @Override
     public void init() {
@@ -324,9 +328,9 @@ public class TeorieInformace extends JApplet {
         createSouth();
     }
 
-
     /**
-     *  Vytvoří centrální část okna programu, tabulka charakteristik jednotlivých písmen.
+     * Vytvoří centrální část okna programu, tabulka charakteristik jednotlivých
+     * písmen.
      */
     protected void createCenter() {
         final JPanel center = new JPanel(new GridLayout());
@@ -336,14 +340,12 @@ public class TeorieInformace extends JApplet {
         final JScrollPane sp = new JScrollPane(table);
 
         center.add(sp);
-        center.setBorder(BorderFactory.createTitledBorder
-                         ("Tabulka charackteristických hodnot"));
+        center.setBorder(BorderFactory.createTitledBorder("Tabulka charackteristických hodnot"));
         panel.add(center);
     }
 
-
     /**
-     *  Vytvoří východní část hlavního okna programu, hodnoty a jejich názvy.
+     * Vytvoří východní část hlavního okna programu, hodnoty a jejich názvy.
      */
     protected void createEast() {
         final GridBagLayout gridbag = new GridBagLayout();
@@ -486,9 +488,8 @@ public class TeorieInformace extends JApplet {
         panel.add(east, BorderLayout.EAST);
     }
 
-
     /**
-     *  Vytvoří obsah jižního panelu hlavního okna programu, textové pole.
+     * Vytvoří obsah jižního panelu hlavního okna programu, textové pole.
      */
     protected void createSouth() {
         final JPanel south = new JPanel(new GridLayout());
@@ -501,18 +502,19 @@ public class TeorieInformace extends JApplet {
         panel.add(south, BorderLayout.SOUTH);
     }
 
-
     /**
-     *  Funkce main pro spousteni appletu z příkazové řádky.
+     * Funkce main pro spousteni appletu z příkazové řádky.
      *
-     *@param  argv  The command line arguments
+     * @param argv
+     *          The command line arguments
      */
-    public static void main(final String[] argv) {
+    public static void main(final String[] argv)
+            throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         final JFrame frame = new JFrame("Teorie informace");
         frame.setContentPane(new TeorieInformace());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
 }
-

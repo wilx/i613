@@ -1,7 +1,6 @@
 package wilx;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -67,7 +66,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@return    Entropie zdrojové jednotky.
      */
     @Override
-    public double entropy(final Character o) {
+    public double entropy(final char o) {
         return -log2(probability(o));
     }
 
@@ -79,11 +78,11 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@return    Entropie zprávy.
      */
     @Override
-    public double messageEntropy(final Character[] m) {
+    public double messageEntropy(final char[] m) {
         double ent = 0;
         double prob;
-        for (int i = 0; i < m.length; ++i) {
-            prob = probability(m[i]);
+        for (Character aM : m) {
+            prob = probability(aM);
             ent += prob * log2(prob);
         }
         return -ent;
@@ -96,9 +95,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
     @Override
     public void compute() {
         avgent = 0;
-        final Iterator<Character> it = freq.keySet().iterator();
-        while (it.hasNext()) {
-            final Character ch = it.next();
+        for (Character ch : freq.keySet()) {
             final double prob = probability(ch);
             avgent += prob * log2(prob);
         }
@@ -113,13 +110,13 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      *@return    Pravděpodobnost.
      */
     @Override
-    public double probability(final Character x) {
+    public double probability(final char x) {
         Object o;
         if ((o = freq.get(x)) == null) {
             return 0;
         }
         else {
-            return (double) ((Integer) o).intValue() / buffer.length;
+            return (double) (Integer) o / buffer.length;
         }
     }
 
@@ -151,13 +148,11 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
     public void computeFrequencies() {
         Object o;
         freq.clear();
-        for (int i = 0; i < buffer.length; ++i) {
-            if ((o = freq.get(new Character(buffer[i]))) == null) {
-                freq.put(new Character(buffer[i]), new Integer(1));
-            }
-            else {
-                freq.put(new Character(buffer[i]),
-                        new Integer(((Integer) o).intValue() + 1));
+        for (char aBuffer : buffer) {
+            if ((o = freq.get(aBuffer)) == null) {
+                freq.put(aBuffer, 1);
+            } else {
+                freq.put(aBuffer, (Integer) o + 1);
             }
         }
     }

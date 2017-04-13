@@ -42,14 +42,12 @@ public class HuffmanCodeTree<ItemType extends Comparable<ItemType>> {
                 }
             });
         final Set<Entry<ItemType, Integer>> entries = probMap.entrySet();
-        final Iterator<Entry<ItemType, Integer>> i = entries.iterator();
         /*
          *  inicializace prioritni frony
          */
-        while (i.hasNext()) {
-            final Entry<ItemType, Integer> e = i.next();
-            q.put(new HuffmanTreeNode<ItemType>(e.getValue().intValue(),
-                    e.getKey()));
+        for (Entry<ItemType, Integer> e : entries) {
+            q.put(new HuffmanTreeNode<>(e.getValue(),
+                e.getKey()));
         }
 
         /*
@@ -61,7 +59,7 @@ public class HuffmanCodeTree<ItemType extends Comparable<ItemType>> {
             HuffmanTreeNode<ItemType> p;
             r = q.get();
             l = q.get();
-            p = new HuffmanTreeNode<ItemType>(r.getWeight() + l.getWeight(), null, l, r);
+            p = new HuffmanTreeNode<>(r.getWeight() + l.getWeight(), null, l, r);
             q.put(p);
         }
         root = q.get();
