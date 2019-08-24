@@ -1,8 +1,6 @@
 package wilx;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -17,7 +15,7 @@ public class HuffmanCodeTree<ItemType extends Comparable<ItemType>> {
     /**
      *  Kořen stromu Huffmanova kódu.
      */
-    protected HuffmanTreeNode<ItemType> root;
+    protected final HuffmanTreeNode<ItemType> root;
 
 
     /**
@@ -27,20 +25,7 @@ public class HuffmanCodeTree<ItemType extends Comparable<ItemType>> {
      */
     public HuffmanCodeTree(final Map<ItemType, Integer> probMap) {
         final PriorityQueue<HuffmanTreeNode<ItemType>> q = new PriorityQueue<>(
-            new Comparator<HuffmanTreeNode<ItemType>>() {
-                @Override
-                public int compare(final HuffmanTreeNode<ItemType> o1, final HuffmanTreeNode<ItemType> o2) {
-                    if (o1.getWeight() < o2.getWeight()) {
-                        return 1;
-                    }
-                    if (o1.getWeight() == o2.getWeight()) {
-                        return 0;
-                    }
-                    else {
-                        return -1;
-                    }
-                }
-            });
+            (o1, o2) -> Double.compare(o2.getWeight(), o1.getWeight()));
         final Set<Entry<ItemType, Integer>> entries = probMap.entrySet();
         /*
          *  inicializace prioritni frony

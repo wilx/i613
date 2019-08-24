@@ -17,7 +17,7 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
     /**
      *  Mapa frekvencí výskytů zdrojových jednotek.
      */
-    protected Map<Character, Integer> freq;
+    protected final Map<Character, Integer> freq;
 
 
     /**
@@ -111,12 +111,12 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      */
     @Override
     public double probability(final char x) {
-        Object o;
+        Integer o;
         if ((o = freq.get(x)) == null) {
             return 0;
         }
         else {
-            return (double) (Integer) o / buffer.length;
+            return (double) o / buffer.length;
         }
     }
 
@@ -146,13 +146,13 @@ public class CharArrayEntropyAnalyzer extends CollectionEntropyAnalyzer {
      */
     @Override
     public void computeFrequencies() {
-        Object o;
+        Integer o;
         freq.clear();
         for (char aBuffer : buffer) {
             if ((o = freq.get(aBuffer)) == null) {
                 freq.put(aBuffer, 1);
             } else {
-                freq.put(aBuffer, (Integer) o + 1);
+                freq.put(aBuffer, o + 1);
             }
         }
     }

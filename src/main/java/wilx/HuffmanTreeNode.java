@@ -12,19 +12,19 @@ public class HuffmanTreeNode<ItemType extends Comparable<ItemType>> {
     /**
      *  Váha uzlu.
      */
-    protected double weight;
+    protected final double weight;
     /**
      *  Obsah uzlu.
      */
-    protected ItemType obj;
+    protected final ItemType obj;
     /**
      *  Levý podstrom.
      */
-    protected HuffmanTreeNode<ItemType> left;
+    protected final HuffmanTreeNode<ItemType> left;
     /**
      *  Pravý podstrom.
      */
-    protected HuffmanTreeNode<ItemType> right;
+    protected final HuffmanTreeNode<ItemType> right;
 
 
     /**

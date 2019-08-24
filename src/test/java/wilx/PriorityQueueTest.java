@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 public class PriorityQueueTest {
 
 	@Test
-	public void test() throws Exception {
+	public void test() {
 		PriorityQueue<Double> pq = new PriorityQueue<>(Arrays.asList(1d, 2.1, 3d));
 		assertEquals(pq.size(), 3);
 		double prev = pq.get();
@@ -26,7 +26,7 @@ public class PriorityQueueTest {
 	}
 
     @Test
-    public void testArray() throws Exception {
+    public void testArray() {
         PriorityQueue<Double> pq = new PriorityQueue<>(new Double[]{1d, 2.1, 3d});
         assertEquals(pq.size(), 3);
         double prev = pq.get();

@@ -50,7 +50,7 @@ public class TeorieInformace extends JApplet {
 
     protected MyTableModel model;
 
-    private static DecimalFormat df = new DecimalFormat("###.###");
+    private static final DecimalFormat df = new DecimalFormat("###.###");
 
     /**
      * Třída implementující DocumentListener pro vstupní pole.
@@ -118,11 +118,7 @@ public class TeorieInformace extends JApplet {
             // update ostatnich hodnot
             // prumenrna entropie
             lblAvgEnt.setText(df.format(ea.averageEntropy() == -0.0 ? 0.0 : ea.averageEntropy()) + " bitů");
-            final char[] m = text.toUpperCase().toCharArray();
-            final char[] msg = new char[m.length];
-            for (i = 0; i < m.length; ++i) {
-                msg[i] = m[i];
-            }
+            final char[] msg = text.toUpperCase().toCharArray();
             double msgEnt = ea.messageEntropy(msg);
             if (msgEnt == -0.0) {
                 msgEnt = 0.0;
@@ -289,8 +285,7 @@ public class TeorieInformace extends JApplet {
         @Override
         public Object getValueAt(final int row, final int col) {
             final List<String> r = data.get(row);
-            final String o = r.get(col);
-            return o;
+            return r.get(col);
         }
 
         /**

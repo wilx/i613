@@ -25,12 +25,12 @@ public class PriorityQueue<ItemType> implements Serializable {
 	/**
 	 * Úložistě obsahu fronty.
 	 */
-	protected ArrayList<ItemType> buf;
+	protected final ArrayList<ItemType> buf;
 
 	/**
 	 * Komparátor objektů fronty.
 	 */
-	protected Comparator<ItemType> cmp;
+	protected final Comparator<ItemType> cmp;
 
 	/**
 	 * Implicitní komparátor.
