@@ -1,5 +1,6 @@
 package wilx;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.Comparator;
  */
 public class PriorityQueue<ItemType> implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 4003912131969360871L;
 
 	/**
@@ -30,20 +32,13 @@ public class PriorityQueue<ItemType> implements Serializable {
 	/**
 	 * Komparátor objektů fronty.
 	 */
-	protected final Comparator<ItemType> cmp;
-
-	/**
-	 * Implicitní komparátor.
-	 */
-	static <ItemType> Comparator<ItemType> getDefaultCmp() {
-		return (o1, o2) -> ((Comparable<ItemType>) o1).compareTo(o2);
-	}
+	protected final Comparator<? super ItemType> cmp;
 
 	/**
 	 * Constructor for the PriorityQueue object
 	 */
 	public PriorityQueue() {
-		this(getDefaultCmp());
+		this((Comparator<? super ItemType>) Comparator.naturalOrder());
 	}
 
 	/**
@@ -53,7 +48,7 @@ public class PriorityQueue<ItemType> implements Serializable {
 	 *          Pole objektů ze kterých bude vytvořena fronta.
 	 */
 	public <T extends ItemType> PriorityQueue(final T[] arr) {
-		cmp = getDefaultCmp();
+		cmp = (Comparator<? super ItemType>) Comparator.naturalOrder();
 		buf = new ArrayList<>(Arrays.asList(arr));
 		size = arr.length;
 		heapify(1);
@@ -65,7 +60,7 @@ public class PriorityQueue<ItemType> implements Serializable {
 	 * @param c
 	 *          Uživatelský komparátor.
 	 */
-	public PriorityQueue(final Comparator<ItemType> c) {
+	public PriorityQueue(final Comparator<? super ItemType> c) {
 		cmp = c;
 		buf = new ArrayList<>();
 		size = 0;
@@ -93,7 +88,7 @@ public class PriorityQueue<ItemType> implements Serializable {
 	 *          Kolekce ze které bude vytvořena fronta.
 	 */
 	public <T extends ItemType> PriorityQueue(final Collection<T> col) {
-		cmp = getDefaultCmp();
+		cmp = (Comparator<? super ItemType>) Comparator.naturalOrder();
 		buf = new ArrayList<>(col);
 		size = col.size();
 		heapify(1);
@@ -107,7 +102,7 @@ public class PriorityQueue<ItemType> implements Serializable {
 	 * @param c
 	 *          Uživatelský komparátor.
 	 */
-	public <T extends ItemType> PriorityQueue(final Collection<T> col, final Comparator<ItemType> c) {
+	public <T extends ItemType> PriorityQueue(final Collection<T> col, final Comparator<? super ItemType> c) {
 		cmp = c;
 		buf = new ArrayList<>(col);
 		size = col.size();

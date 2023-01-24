@@ -1,15 +1,5 @@
 package wilx;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
@@ -28,6 +18,16 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.io.Serial;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Hlavní třída appletu Teorie informace.
@@ -37,6 +37,7 @@ import javax.swing.text.Document;
  */
 public class TeorieInformace extends JApplet {
 
+    @Serial
     private static final long serialVersionUID = -6839232509270632651L;
 
     protected JPanel contentPane;
@@ -169,6 +170,7 @@ public class TeorieInformace extends JApplet {
      */
     class MyTableModel extends AbstractTableModel {
 
+        @Serial
         private static final long serialVersionUID = 6050182162198136481L;
 
         List<String> columns = new ArrayList<>();

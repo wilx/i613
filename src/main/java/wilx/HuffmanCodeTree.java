@@ -1,5 +1,6 @@
 package wilx;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,7 +26,7 @@ public class HuffmanCodeTree<ItemType extends Comparable<ItemType>> {
      */
     public HuffmanCodeTree(final Map<ItemType, Integer> probMap) {
         final PriorityQueue<HuffmanTreeNode<ItemType>> q = new PriorityQueue<>(
-            (o1, o2) -> Double.compare(o2.getWeight(), o1.getWeight()));
+            Comparator.comparingDouble(HuffmanTreeNode<ItemType>::getWeight).reversed());
         final Set<Entry<ItemType, Integer>> entries = probMap.entrySet();
         /*
          *  inicializace prioritni frony
