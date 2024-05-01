@@ -1,12 +1,13 @@
 package wilx;
 
 import java.io.Serial;
-import java.io.Serializable;
+import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * Třída prioritní fronty použitá při konstrukci stromu Huffmanova kódu.
@@ -14,7 +15,7 @@ import java.util.Comparator;
  * @author Václav Haisman
  * @created 25. leden 2003
  */
-public class PriorityQueue<ItemType> implements Serializable {
+public class PriorityQueue<ItemType> extends AbstractQueue<ItemType> {
 
 	@Serial
 	private static final long serialVersionUID = 4003912131969360871L;
@@ -241,6 +242,7 @@ public class PriorityQueue<ItemType> implements Serializable {
 	 *
 	 * @return true/false
 	 */
+	@Override
 	public boolean isEmpty() {
 		return size <= 0;
 	}
@@ -250,7 +252,33 @@ public class PriorityQueue<ItemType> implements Serializable {
 	 *
 	 * @return Počet prvků.
 	 */
+	@Override
 	public int size() {
 		return size;
+	}
+
+	@Override
+	public Iterator<ItemType> iterator() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean offer(ItemType item) {
+		put(item);
+		return true;
+	}
+
+	@Override
+	public ItemType poll() {
+		return this.get();
+	}
+
+	@Override
+	public ItemType peek() {
+		ItemType ret = null;
+		if (size > 0) {
+			ret = buf.get(0);
+		}
+		return ret;
 	}
 }

@@ -44,8 +44,16 @@ public class TeorieInformace extends JApplet {
 
     protected JPanel panel;
 
-    protected JLabel lblAvgEnt, lblMsgEnt, lblMsgLen, lblMsgHuffLen, lblMsgRed, lblMsgHuffRed, lblCWordLen,
-            lblCWordHuffLen, lblAvgRedASCII, lblAvgRedHuff;
+    protected JLabel lblAvgEnt;
+    protected JLabel lblMsgEnt;
+    protected JLabel lblMsgLen;
+    protected JLabel lblMsgHuffLen;
+    protected JLabel lblMsgRed;
+    protected JLabel lblMsgHuffRed;
+    protected JLabel lblCWordLen;
+    protected JLabel lblCWordHuffLen;
+    protected JLabel lblAvgRedASCII;
+    protected JLabel lblAvgRedHuff;
 
     protected CharArrayEntropyAnalyzer ea;
 
@@ -108,7 +116,7 @@ public class TeorieInformace extends JApplet {
             try {
                 text = doc.getText(0, doc.getLength());
             } catch (final BadLocationException ex) {
-                System.err.println("Exceprion: " + ex);
+                System.err.println("Exception: " + ex);
                 return;
             }
             // update tabulky
@@ -143,7 +151,7 @@ public class TeorieInformace extends JApplet {
             lblMsgHuffRed.setText(df.format(len - msgEnt) + " bitů");
             // prumerna delka slova ASCII kodu zpravy
             double avgwordlen = 0;
-            final Character[] klice = huffkod.keySet().toArray(new Character[huffkod.keySet().size()]);
+            final Character[] klice = huffkod.keySet().toArray(new Character[0]);
             for (i = 0; i < klice.length; ++i) {
                 avgwordlen += 8 * ea.probability(klice[i]);
             }
@@ -168,14 +176,14 @@ public class TeorieInformace extends JApplet {
      * @author wilx
      * @created 25. leden 2003
      */
-    class MyTableModel extends AbstractTableModel {
+    protected class MyTableModel extends AbstractTableModel {
 
         @Serial
         private static final long serialVersionUID = 6050182162198136481L;
 
-        List<String> columns = new ArrayList<>();
+        private List<String> columns = new ArrayList<>();
 
-        List<List<String>> data = new ArrayList<>();
+        private List<List<String>> data = new ArrayList<>();
 
         /**
          * Constructor for the MyTableModel object
@@ -198,7 +206,7 @@ public class TeorieInformace extends JApplet {
             data = new ArrayList<>();
             columns = new ArrayList<>();
             final Map<Character, Integer> freq = ea.getFrequenciesMap();
-            final Character[] klice = freq.keySet().toArray(new Character[freq.keySet().size()]);
+            final Character[] klice = freq.keySet().toArray(new Character[0]);
             Arrays.sort(klice);
             // zahlavi
             columns.add("Názvy");
